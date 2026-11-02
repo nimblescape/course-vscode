@@ -118,12 +118,11 @@ Every extension of the publisher `nimblescape` uses one name,
 | npm package | `@nimblescape/<name>` | `@nimblescape/course` |
 | Folder in a repository | `.<name>/` | `.course/` |
 
-The repository is `majikmate/course-vscode` until it moves to nimblescape;
-GitHub forwards the old address after the move. The manifests and the
-documents already name `nimblescape/course-vscode`. The
+The repository moved from `majikmate/course-vscode` to
+`nimblescape/course-vscode`; GitHub forwards the old address. The
 [Marketplace setup](#setup-of-a-repository) and the
-[npmjs.com setup](#npmjscom-setup) run after the move, because both name the
-repository.
+[npmjs.com setup](#npmjscom-setup) name the repository
+`nimblescape/course-vscode`.
 
 ## Release
 
@@ -279,11 +278,10 @@ No npm token is stored in GitHub.
 
 ### Setup
 
-The repository moves from `majikmate` to `nimblescape` before the first
-publish: the trusted publisher names the repository, and `npm publish` with
+The trusted publisher names the repository, and `npm publish` with
 provenance fails when `repository.url` of `cli/package.json` names another
-repository. The setup scripts read the current name of the repository from
-GitHub.
+repository than `nimblescape/course-vscode`. The setup scripts read the
+current name of the repository from GitHub.
 
 npmjs.com sets up a trusted publisher only for a package that exists, so
 the first version is published once by hand, from the GitHub release of
