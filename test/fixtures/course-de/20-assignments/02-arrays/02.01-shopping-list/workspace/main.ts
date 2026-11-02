@@ -1,0 +1,1 @@
+const prices = [2.5, 1.2];
