@@ -4,7 +4,8 @@
 // Licensed under the MIT License. See LICENSE in the repository root for details.
 
 // Tests in a real VS Code (npm run test:vscode, .vscode-test.mjs): mocha runs them in the extension host, with a copy of
-// the test course as the workspace. They check that the extension reads the course (R-COURSE-009), shows the checks as
+// the test course as the workspace. They check that the extension reads the course (R-COURSE-009) and only a folder with
+// .course/course.yml as a course, shows the checks as
 // warnings, also of a text that is not saved yet (R-COURSE-010), and writes the comment of the format with the save of
 // a README of the course (R-COURSE-012).
 
@@ -54,6 +55,21 @@ describe('the course extension', () => {
     assert.equal(courses.length, 1);
     assert.equal(courses[0].loaded.course.name, 'demo');
     assert.deepEqual(courses[0].loaded.course.chapters.map((chapter) => chapter.number), ['01', '02']);
+  });
+
+  it('reads no course from a folder without .course/course.yml', async () => {
+    const extension = await api();
+    const settings = path.join(folder(), '.course', 'course.yml');
+    const moved = `${settings}.off`;
+    fs.renameSync(settings, moved);
+    try {
+      extension.refresh();
+      assert.equal(extension.courses().length, 0);
+    } finally {
+      fs.renameSync(moved, settings);
+      extension.refresh();
+    }
+    assert.equal(extension.courses().length, 1);
   });
 
   it('shows the checks of the files of the course as warnings', async () => {

@@ -19,14 +19,15 @@ from its form as a warning.
 
 ## What the extension does on your computer
 
-- **When it works.** The extension starts with a workspace that holds
-  `.course/course.yml`, or when a Markdown file opens. It shows the view
-  "Course" only in a workspace with a course. It does not run in VS Code for
-  the Web.
+- **When it works.** The extension starts only with a workspace that holds
+  `.course/course.yml`; in every other workspace it does nothing. It does
+  not run in VS Code for the Web.
 - **Files.** The extension reads the Markdown files of each course of the
   workspace and its settings `.course/course.yml`. A course is a folder of
-  the workspace with `.course/course.yml`, or with README files of chapters
-  or assignments at the default paths of the format. It changes the text of
+  the workspace with `.course/course.yml`; `cs create` writes the file for a
+  new course. A repository with README files of chapters or assignments but
+  without this file, for example a course from before the format, is no
+  course for the extension. It changes the text of
   a file only when you save a file of a course without the comment of the
   format, and then only adds
   that comment at the top (setting `nimblescape.course.addFormatComment`),

@@ -13,6 +13,8 @@ takes the section of a version as the notes of its GitHub release.
 
 The first version.
 
+- The extension works in a workspace with the settings `.course/course.yml`
+  of a course and does nothing in other workspaces.
 - The view "Course" in the explorer shows the chapters of a course with their
   learning objectives, and the assignments with their objectives,
   requirements, criteria and the score of the last feedback.
