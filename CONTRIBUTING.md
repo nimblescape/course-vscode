@@ -29,7 +29,8 @@ until the document moves into this repository.
 
 ## Development
 
-The development tools are TypeScript, esbuild, vitest,
+The development tools are TypeScript 6.0, ESLint with typescript-eslint,
+esbuild, vitest,
 [`@vscode/test-cli`](https://github.com/microsoft/vscode-test-cli) for the
 tests in VS Code, and [`@vscode/vsce`](https://github.com/microsoft/vscode-vsce),
 the Microsoft tool that packages and publishes extensions. Everything runs on
@@ -42,7 +43,7 @@ Node.js 22 or later (`engines` of `cli/package.json`).
 | --- | --- |
 | `npm ci --ignore-scripts` | Installs the locked development tools and runs no install script of a dependency. |
 | `npm run typecheck` | Checks the types with `tsc`. esbuild does not check them. |
-| `npm run lint` | Checks the sources with ESLint, with the recommended rules of ESLint and of typescript-eslint (`eslint.config.mjs`). |
+| `npm run lint` | Checks the sources with ESLint (`eslint.config.mjs`): the recommended rules of ESLint and of typescript-eslint, and the rules that find promises that nobody waits for, with the types of `tsconfig.json`. The file is the same in every nimblescape extension, except its lists of the ignored files and of the scripts of webviews. `npm run lint -- --fix` corrects what ESLint can correct itself. TypeScript stays at version 6.0.3, as in every nimblescape extension, because typescript-eslint supports TypeScript only up to 6.0; Dependabot proposes no other version. A rule that a line breaks on purpose is switched off for that line only, with `// eslint-disable-next-line <rule>` and the reason. |
 | `npm test` | Runs the unit tests with vitest. |
 | `npm run test:cli` | Builds the bundles and runs the tests of the built `cs`. |
 | `npm run test:vscode` | Builds the bundle and the tests in VS Code, downloads VS Code to `.vscode-test/` and runs the tests in it, with a copy of the test course as the workspace. On Linux without a display, run it as `xvfb-run -a npm run test:vscode`. `VSCODE_TEST_VERSION=insiders` or a version such as `1.125.0` selects another VS Code. |
