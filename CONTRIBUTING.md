@@ -78,18 +78,19 @@ of Markdown Notes and Markdown Paper:
 
 The release publishes the package on npmjs.com (see [Release](#release)). A
 version that is not released yet is built from a clone of this repository at a
-fixed commit, and the file that `npm pack` writes is installed:
+fixed commit, and npx runs the file that `npm pack` writes:
 
 ```sh
 git clone https://github.com/nimblescape/course-vscode.git
 cd course-vscode
 git checkout <commit>
 npm ci --ignore-scripts && node esbuild.mjs --production && npm pack ./cli
-npm install --global "$PWD/nimblescape-course-<version>.tgz"
+npx -y "file:$PWD/nimblescape-course-<version>.tgz" <command>
 ```
 
 A program in another language, for example the feedback program in Python,
-runs `cs read <path>` and reads the JSON that it prints.
+runs `npx -y @nimblescape/course read <path>` and reads the JSON that it
+prints.
 
 ## Tests in VS Code
 

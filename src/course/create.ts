@@ -62,8 +62,9 @@ function texts(name: string, language: 'de' | 'en'): Texts {
 
 /** rulesText is the start of the file of the own rules of a new course for every file. */
 const rulesText = `<!--
-The own rules of this course for every file. \`cs instructions <topic>\` prints this file after the rules of the
-format (${specUrl}), and the file <topic>.md of this folder after it, for example chapter.md or assignment.md.
+The own rules of this course for every file. \`npx -y @nimblescape/course instructions <topic>\` prints this file
+after the rules of the format (${specUrl}), and the file <topic>.md of this folder after it, for example chapter.md
+or assignment.md.
 A file with another name adds a topic of this course. Write the rules as sections of the second level.
 -->
 

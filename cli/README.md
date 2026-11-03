@@ -1,7 +1,7 @@
 # @nimblescape/course
 
-The command `cs` and its library keep the files of a course in a Git
-repository in one form for people, AI agents and programs, as the VS Code
+The command and the library of this package keep the files of a course in a
+Git repository in one form for people, AI agents and programs, as the VS Code
 extension
 [nimblescape Course](https://github.com/nimblescape/course-vscode) does. The
 command prints the rules of the files for AI agents, checks the files
@@ -9,42 +9,41 @@ against their form, writes the comment of the format, reads a course into
 JSON for programs in any language, and writes the feedback file of an
 assignment for the feedback program.
 
-## Install
+## Run
 
-`npx -y @nimblescape/course <command>` runs the command without an
-installation. To install the command `cs`:
+AI agents and people run the command with npx, without an installation:
 
 ```sh
-npm install --global @nimblescape/course
+npx -y @nimblescape/course <command>
 ```
 
-`cs` needs Node.js 22 or newer and has no dependencies. A version that is not
-released yet is built from a clone of the repository at a fixed commit, and
-the file that `npm pack` writes is installed:
+The command needs Node.js 22 or newer and has no dependencies. A version that
+is not released yet is built from a clone of the repository at a fixed commit,
+and npx runs the file that `npm pack` writes:
 
 ```sh
 git clone https://github.com/nimblescape/course-vscode.git
 cd course-vscode
 git checkout <commit>
 npm ci --ignore-scripts && node esbuild.mjs --production && npm pack ./cli
-npm install --global "$PWD/nimblescape-course-<version>.tgz"
+npx -y "file:$PWD/nimblescape-course-<version>.tgz" <command>
 ```
 
 ## Usage
 
 ```sh
-cs instructions                # lists the topics of the format and of the course
-cs instructions assignment     # prints the rules of an assignment README and of the course
-cs check                       # checks the course of the current folder
-cs check path/to/course
-cs format                      # writes the comment of the format into each file
-cs format --check
-cs read                        # prints the course as JSON
-cs read 20-assignments/01-loops/01.01-count
-cs read 20-assignments/01-loops/01.01-count/FEEDBACK.md
-cs create my-course --language de   # writes the files of a new course
-cs feedback --form 20-assignments/01-loops/01.01-count               # prints the form of the answer
-cs feedback 20-assignments/01-loops/01.01-count answer.json --commits 3   # writes FEEDBACK.md
+npx -y @nimblescape/course instructions              # lists the topics of the format and of the course
+npx -y @nimblescape/course instructions assignment   # prints the rules of an assignment README and of the course
+npx -y @nimblescape/course check                     # checks the course of the current folder
+npx -y @nimblescape/course check path/to/course
+npx -y @nimblescape/course format                    # writes the comment of the format into each file
+npx -y @nimblescape/course format --check
+npx -y @nimblescape/course read                      # prints the course as JSON
+npx -y @nimblescape/course read 20-assignments/01-loops/01.01-count
+npx -y @nimblescape/course read 20-assignments/01-loops/01.01-count/FEEDBACK.md
+npx -y @nimblescape/course create my-course --language de   # writes the files of a new course
+npx -y @nimblescape/course feedback --form 20-assignments/01-loops/01.01-count   # prints the form of the answer
+npx -y @nimblescape/course feedback 20-assignments/01-loops/01.01-count answer.json --commits 3   # writes FEEDBACK.md
 ```
 
 | Command | Effect |
@@ -56,7 +55,7 @@ cs feedback 20-assignments/01-loops/01.01-count answer.json --commits 3   # writ
 | `read [path]` | Prints the course, an assignment, a chapter or a feedback file as JSON. The path is the folder of the course, the folder or the README of an assignment, the README of a chapter, or a `FEEDBACK.md`. |
 | `create <folder> [--language de\|en]` | Writes the files of a new, empty course into the folder: `.course/course.yml`, `.course/instructions/all.md`, the README of the course, the overviews, the course plan and the cheat sheet, each with the comment of the format. It keeps each file that exists. The language is `en` when the option is missing. |
 | `feedback <assignment> <answer>` | For the feedback program: checks the JSON answer of an AI model on the work of a student (the file `<answer>`), computes the score, and writes `FEEDBACK.md` next to the README of the assignment with the comment of the format, or appends an update when the file has a feedback. Options: `--commits <n>` (the commits of the student in `workspace/`, default 0), `--not-running <reason>` (a reason why the work does not run, in the language of the course; the score is then at most 50 %; it may repeat), `--time <DD.MM.YYYY HH:MM>` (default: now, in the local time). |
-| `feedback --form <assignment>` | Prints the form of the answer with each requirement and criterion of the assignment, for the prompt of the AI model. The rules of judging print `cs instructions feedback`. |
+| `feedback --form <assignment>` | Prints the form of the answer with each requirement and criterion of the assignment, for the prompt of the AI model. The rules of judging print `instructions feedback`. |
 | `--help` | Shows the help. |
 | `--version` | Shows the version of the command and of the format. |
 
@@ -74,8 +73,9 @@ command fits a check of a pull request.
 ## The format
 
 [docs/format.md](https://github.com/nimblescape/course-vscode/blob/main/docs/format.md)
-specifies the files of a course; `cs instructions <topic>` prints its
-sections of a topic. Each file of a course starts with a comment that names
+specifies the files of a course;
+`npx -y @nimblescape/course instructions <topic>` prints its sections of a
+topic. Each file of a course starts with a comment that names
 the format and tells AI agents the command of its rules:
 
 ```markdown
@@ -108,8 +108,8 @@ const problems = checkCourse('path/to/course');
 | `readCourse(folder)` | The course: its name, language, chapters with their learning objectives, and assignments. |
 | `readAssignment(folder)` | One assignment with its objectives, requirements, rules, criteria and feedback, or `undefined`. |
 | `readFeedback(file)` | The entries of a `FEEDBACK.md`: the first feedback and each update, with the status of each requirement and the score, or `undefined`. |
-| `checkCourse(folder)` | Each place where a file of the course differs from its form, as `cs check` reports it. |
-| `topicText(topic, folder?)` | The rules of a topic, as `cs instructions <topic>` prints them, or `undefined` for an unknown topic. With a folder, the text ends with the own rules of the course of that folder. |
+| `checkCourse(folder)` | Each place where a file of the course differs from its form, as the command `check` reports it. |
+| `topicText(topic, folder?)` | The rules of a topic, as the command `instructions <topic>` prints them, or `undefined` for an unknown topic. With a folder, the text ends with the own rules of the course of that folder. |
 
 ## Third-party code
 
