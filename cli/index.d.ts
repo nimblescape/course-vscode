@@ -15,11 +15,17 @@ export declare function readAssignment(folder: string): Assignment | undefined;
 /** readFeedback reads a feedback file in the language of its course; undefined when the file does not exist. */
 export declare function readFeedback(file: string): Feedback | undefined;
 
-/** checkCourse returns each place where a file of a course differs from its form, as `course check` reports it. */
+/** checkCourse returns each place where a file of a course differs from its form, as `cs check` reports it. */
 export declare function checkCourse(folder: string): Problem[];
 
-/** topicText returns the rules of a topic as Markdown, as `course instructions <topic>` prints them, or undefined. */
-export declare function topicText(topic: 'course' | 'chapter' | 'assignment' | 'objectives' | 'feedback' | string): string | undefined;
+/**
+ * topicText returns the rules of a topic as Markdown, as `cs instructions <topic>` prints them, or undefined. With a
+ * folder, the text ends with the own rules of the course of the folder, from its .course/instructions/.
+ */
+export declare function topicText(
+  topic: 'course' | 'chapter' | 'assignment' | 'objectives' | 'feedback' | 'tutorial' | 'walkthrough' | 'plan' | 'cheat-sheet' | 'overview' | string,
+  folder?: string,
+): string | undefined;
 
 export interface Course {
   name: string;

@@ -3,11 +3,14 @@
 Keeps the files of a course in a Git repository in one form for people, AI
 agents and programs: the README of the course, the README of each chapter
 with its learning objectives, the README of each assignment with its
-requirements, and the feedback file of each assignment. The form is
+requirements, the feedback file of each assignment, and the files for
+people: the tutorial pages, the walkthroughs for the teacher, the course
+plan, the cheat sheet and the overviews of the folders. The form is
 specified once, in
 [the format of the files of a course](https://github.com/nimblescape/course-vscode/blob/main/docs/format.md),
 and a course does not copy it. A comment at the top of each file names the
-format and tells AI agents the command that prints its rules.
+format and tells AI agents the command that prints its rules, followed by
+the own rules of the course from its hidden folder `.course/instructions/`.
 
 The view "Course" in the explorer shows the chapters of a course with their
 learning objectives, and the assignments with their objectives, requirements,
@@ -23,8 +26,9 @@ from its form as a warning.
 - **Files.** The extension reads the Markdown files of each course of the
   workspace and its settings `.course/course.yml`. A course is a folder of
   the workspace with `.course/course.yml`, or with README files of chapters
-  or assignments at the default paths of the format. It changes the text of a file only when you save a
-  README of a course without the comment of the format, and then only adds
+  or assignments at the default paths of the format. It changes the text of
+  a file only when you save a file of a course without the comment of the
+  format, and then only adds
   that comment at the top (setting `nimblescape.course.addFormatComment`),
   or when you run "Add Format Comments". Undo takes the change back. It never
   changes a feedback file, and never a file whose comment names a newer
@@ -46,12 +50,14 @@ from its form as a warning.
   in the text editor and in the Problems view, after a pause in typing, also
   for text that is not saved yet. Examples: a missing section, an objective
   of an assignment that no chapter has, a level that differs from the level
-  in the chapter, a requirement that is no item of the checklist, or a mark
-  of objectives in the wrong place.
-- **Comment of the format.** A comment at the top of each README names the
+  in the chapter, a requirement that is no item of the checklist, a mark of
+  objectives in the wrong place, a tutorial page that the walkthrough of its
+  chapter does not link, an input of more than 30 minutes, or a section of
+  the cheat sheet over its limits.
+- **Comment of the format.** A comment at the top of each file names the
   format `nimblescape-course`, its version, the kind of the file and the
   command that prints its rules for AI agents. The extension writes it when
-  you save a README of a course without it.
+  you save a file of a course without it.
 - **Learning objectives.** Each objective has a number per chapter and one
   of the six levels of the revised taxonomy of Bloom (Krathwohl, 2002), from
   `K1 – Erinnern` / `K1 – Remember` to `K6 – Erschaffen` / `K6 – Create`.
@@ -64,8 +70,10 @@ from its form as a warning.
 | --- | --- |
 | See the structure of a course | Open the folder of the course; the view "Course" is in the explorer. |
 | See where a file differs from its form | Open the file, or run "Course: Check Course" for the Problems view of all files. |
-| Add the comment of the format to all README files | Run "Course: Add Format Comments". |
-| Read the rules of a kind of file | Run `npx -y @nimblescape/course instructions <topic>` in a terminal, with the topic `course`, `chapter`, `assignment`, `objectives` or `feedback`. |
+| Add the comment of the format to all files | Run "Course: Add Format Comments". |
+| Read the rules of a kind of file | Run `npx -y @nimblescape/course instructions <topic>` in a terminal, with the topic `course`, `chapter`, `assignment`, `objectives`, `feedback`, `tutorial`, `walkthrough`, `plan`, `cheat-sheet` or `overview`. |
+| Write the own rules of a course | Write them into `.course/instructions/all.md` for every file and into `.course/instructions/<topic>.md` for one topic. |
+| Start a new course | Run `npx -y @nimblescape/course create <folder> --language de` (or `en`). |
 | Read the feedback on an assignment | Click the button at the assignment in the view "Course". |
 
 A course sets its own paths and language in `.course/course.yml`, for
@@ -84,15 +92,16 @@ names every field and its default.
 
 ## Command line
 
-The npm package `@nimblescape/course` has the command `course` with the same
+The npm package `@nimblescape/course` has the command `cs` with the same
 reader and checks, for a terminal, for CI and for programs in other
 languages:
 
 ```sh
-course instructions assignment   # prints the rules of the README of an assignment
-course check                     # reports each place where a file differs from its form
-course format                    # writes the comment of the format into each README
-course read 20-assignments/01-loops/01.01-count   # prints the assignment as JSON
+cs instructions assignment   # prints the rules of an assignment README and of the course
+cs check                     # reports each place where a file differs from its form
+cs format                    # writes the comment of the format into each file
+cs read 20-assignments/01-loops/01.01-count   # prints the assignment as JSON
+cs create my-course --language de             # writes the files of a new course
 ```
 
 The [README of the package](https://github.com/nimblescape/course-vscode/blob/main/cli/README.md)
@@ -102,7 +111,7 @@ describes each command and the library.
 
 | Setting | Default | Effect |
 | --- | --- | --- |
-| `nimblescape.course.addFormatComment` | `true` | Writes the comment of the format into a README of a course when you save it, if it has none or one of an older version. The auto save after a delay never writes it. |
+| `nimblescape.course.addFormatComment` | `true` | Writes the comment of the format into a file of a course when you save it, if it has none or one of an older version. The auto save after a delay never writes it. |
 | `nimblescape.course.checkDelay` | `800` | The pause in typing, in milliseconds, after which the text editor shows the checks of a file again. |
 
 ## Limits

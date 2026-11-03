@@ -38,6 +38,40 @@ export interface Language {
   };
   /** mark are the words of the mark of the objectives, for one objective and for several. */
   mark: { one: string; many: string };
+  /** tutorial are the headings of the optional sections of a tutorial page. */
+  tutorial: {
+    mistakes: readonly string[];
+    tryIt: readonly string[];
+  };
+  /** walkthrough are the names of the parts of a walkthrough. */
+  walkthrough: {
+    /** title is the word before the colon of the heading of the first level. */
+    title: string;
+    /** chapter, lessons and inputs are the bold labels of the head, without their colons. */
+    chapter: string;
+    lessons: string;
+    inputs: readonly string[];
+    objectives: readonly string[];
+    prepare: readonly string[];
+    opening: readonly string[];
+    /** input is the first word of the heading of an input. */
+    input: string;
+    /** handOff is the first word of the heading of the third level of a hand-off. */
+    handOff: string;
+    workTime: readonly string[];
+    stumbling: readonly string[];
+    miniInputs: readonly string[];
+    differentiation: readonly string[];
+    closing: readonly string[];
+    material: readonly string[];
+  };
+  /** plan are the headings of the sections of the plan of the walkthroughs. */
+  plan: {
+    coursePlan: readonly string[];
+    walkthroughs: readonly string[];
+  };
+  /** cheatSheet is the heading of the first level of the cheat sheet. */
+  cheatSheet: string;
   /** levels are the names of the six levels, K1 to K6; a level may have more than one name. */
   levels: readonly (readonly string[])[];
   /** feedback are the fixed texts of a feedback file. */
@@ -75,6 +109,26 @@ const german: Language = {
     criteria: ['Kriterien'],
   },
   mark: { one: 'Lernziel', many: 'Lernziele' },
+  tutorial: { mistakes: ['Häufige Fehler'], tryIt: ['Probier es aus'] },
+  walkthrough: {
+    title: 'Walkthrough',
+    chapter: 'Kapitel',
+    lessons: 'Doppelstunden',
+    inputs: ['Inputs', 'Input'],
+    objectives: ['Lernziele'],
+    prepare: ['Vorbereitung'],
+    opening: ['Einstiegsfrage (optional)'],
+    input: 'Input',
+    handOff: 'Übergabe',
+    workTime: ['Während der Arbeitszeit'],
+    stumbling: ['Stolpersteine'],
+    miniInputs: ['Mini-Inputs bei Bedarf (≤ 5 min)'],
+    differentiation: ['Differenzierung'],
+    closing: ['Abschlussreflexion (optional)'],
+    material: ['Material'],
+  },
+  plan: { coursePlan: ['Kursplan'], walkthroughs: ['Walkthroughs'] },
+  cheatSheet: 'Cheat Sheet',
   levels: [['Erinnern'], ['Verstehen'], ['Anwenden'], ['Analysieren'], ['Bewerten'], ['Erschaffen']],
   feedback: {
     title: 'Feedback',
@@ -110,6 +164,26 @@ const english: Language = {
     criteria: ['Criteria'],
   },
   mark: { one: 'objective', many: 'objectives' },
+  tutorial: { mistakes: ['Common Mistakes'], tryIt: ['Try It'] },
+  walkthrough: {
+    title: 'Walkthrough',
+    chapter: 'Chapter',
+    lessons: 'Double lessons',
+    inputs: ['Inputs', 'Input'],
+    objectives: ['Learning Objectives'],
+    prepare: ['Before You Start'],
+    opening: ['Opening Question (optional)'],
+    input: 'Input',
+    handOff: 'Hand-off',
+    workTime: ['During the Work Time'],
+    stumbling: ['Stumbling Blocks'],
+    miniInputs: ['Mini-Inputs on Demand (≤ 5 min)'],
+    differentiation: ['Differentiation'],
+    closing: ['Closing Reflection (optional)'],
+    material: ['Material'],
+  },
+  plan: { coursePlan: ['Course Plan'], walkthroughs: ['Walkthroughs'] },
+  cheatSheet: 'Cheat Sheet',
   levels: [['Remember'], ['Understand'], ['Apply'], ['Analyze', 'Analyse'], ['Evaluate'], ['Create']],
   feedback: {
     title: 'Feedback',

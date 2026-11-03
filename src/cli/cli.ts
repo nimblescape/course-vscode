@@ -3,33 +3,35 @@
 // Licensed under the MIT License. See LICENSE in the repository root for details.
 
 /**
- * The command course, for people on the command line, for programs and for AI agents. It is the npm package
+ * The command cs, for people on the command line, for programs and for AI agents. It is the npm package
  * @nimblescape/course of cli/:
  *
- * - `instructions [topic]` prints the rules of a topic for AI agents
- *   ([R-COURSE-005](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-005)).
+ * - `instructions [topic]` prints the rules of a topic for AI agents, then the own rules of the course from
+ *   .course/instructions/ ([R-COURSE-005](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-005)).
  * - `check [folder]` reports each place where a file of a course differs from its form
  *   ([R-COURSE-010](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-010)).
- * - `format [folder]` writes the comment of the format into each README of a course that has none or has one of an
+ * - `format [folder]` writes the comment of the format into each file of a course that has none or has one of an
  *   older version ([R-COURSE-004](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-004)).
  * - `read [path]` prints a course, an assignment, a chapter or a feedback file as JSON
  *   ([R-COURSE-009](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-009)), for a program in
  *   any language, for example the feedback program.
+ * - `create <folder>` writes the files of a new, empty course, each with the comment of the format of its kind.
  *
  * The exit code is 0 for success, 1 when `check` found a problem or `format --check` found a file that the format
- * changes, and 2 for a wrong command or option, or a path that is no part of a course. The module uses no API of
- * VS Code, and main.ts runs it in Node.js.
+ * changes, and 2 for a wrong command or option, a path that is no part of a course, or a folder that already holds a
+ * course. The module uses no API of VS Code, and main.ts runs it in Node.js.
  */
 
 import * as path from 'node:path';
 import { version } from '../../package.json';
 import { formatVersion, versionText } from '../course/comment';
-import { type Files, feedbackName, findCourseFolder, loadCourse, readFeedback } from '../course/course';
+import { type Files, feedbackName, findCourseFolder, loadCourse, readFeedback, settingsFile } from '../course/course';
+import { newCourse } from '../course/create';
 import { commentChanges } from '../course/format';
-import { topicList, topicText } from '../course/instructions';
+import { readCourseRules, topicList, topicText } from '../course/instructions';
 
 /** command is the name of the command, the `bin` of cli/package.json, as the shell calls it. */
-export const command = 'course';
+export const command = 'cs';
 
 /** usage is the help of the command. */
 export const usage = [
@@ -38,13 +40,16 @@ export const usage = [
   'The files of a course in a Git repository in one form for people, AI agents and programs.',
   '',
   'Commands:',
-  '  instructions [topic]   print the rules of a topic for AI agents; without a topic, the list of the topics',
+  '  instructions [topic]   print the rules of a topic for AI agents, then the own rules of the course from',
+  '                         .course/instructions/; without a topic, the list of the topics',
   '  check [folder]         report each place where a file of the course differs from its form',
-  '  format [folder]        write the comment of the format into each README of the course that needs it',
+  '  format [folder]        write the comment of the format into each file of the course that needs it',
   '      --check            write nothing; exit with 1 when a file needs the comment',
   '  read [path]            print the course, an assignment, a chapter or a feedback file as JSON: a path is the',
   '                         folder of the course, the folder or README of an assignment, the README of a chapter,',
   '                         or a FEEDBACK.md',
+  '  create <folder>        write the files of a new, empty course, each with the comment of the format',
+  '      --language <code>  the language of the course, de or en (default: en)',
   '',
   'A folder or path is the current folder when it is missing. The folder of a course is the nearest folder with',
   '.course/course.yml, else the nearest folder with .git.',
@@ -85,12 +90,32 @@ export function run(args: readonly string[], io: Io): number {
     return 0;
   }
   const [name, ...rest] = args;
-  const options = rest.filter((arg) => arg.startsWith('--'));
-  const operands = rest.filter((arg) => !arg.startsWith('--'));
-  const allowed: Record<string, string[]> = { instructions: [], check: [], format: ['--check'], read: [] };
+  const allowed: Record<string, string[]> = { instructions: [], check: [], format: ['--check'], read: [], create: ['--language'] };
+  /** valued are the options that take a value, as `--language de` or `--language=de`. */
+  const valued = new Set(['--language']);
   if (!(name in allowed)) {
     io.err(`Unknown command "${name}".\n\n${usage}`);
     return 2;
+  }
+  const options: string[] = [];
+  const values = new Map<string, string>();
+  const operands: string[] = [];
+  for (let index = 0; index < rest.length; index++) {
+    const arg = rest[index];
+    if (!arg.startsWith('--')) {
+      operands.push(arg);
+      continue;
+    }
+    const [option, inline] = arg.includes('=') ? [arg.slice(0, arg.indexOf('=')), arg.slice(arg.indexOf('=') + 1)] : [arg, undefined];
+    options.push(option);
+    if (valued.has(option)) {
+      const value = inline ?? rest[++index];
+      if (value === undefined || value.startsWith('--')) {
+        io.err(`The option ${option} of "${name}" needs a value.`);
+        return 2;
+      }
+      values.set(option, value);
+    }
   }
   const wrong = options.filter((option) => !allowed[name].includes(option));
   if (wrong.length > 0 || operands.length > 1) {
@@ -100,16 +125,45 @@ export function run(args: readonly string[], io: Io): number {
   const target = path.resolve(io.cwd, operands[0] ?? '.');
 
   if (name === 'instructions') {
+    const rules = readCourseRules(findCourseFolder(io.cwd, io.files), io.files);
     if (operands.length === 0) {
-      io.out(topicList(command));
+      io.out(topicList(command, rules));
       return 0;
     }
-    const text = topicText(operands[0]);
+    const text = topicText(operands[0], rules);
     if (text === undefined) {
-      io.err(`Unknown topic "${operands[0]}".\n\n${topicList(command)}`);
+      io.err(`Unknown topic "${operands[0]}".\n\n${topicList(command, rules)}`);
       return 2;
     }
     io.out(text.trimEnd());
+    return 0;
+  }
+
+  if (name === 'create') {
+    if (operands.length === 0) {
+      io.err(`"create" needs the folder of the new course.\n\n${usage}`);
+      return 2;
+    }
+    const language = values.get('--language') ?? 'en';
+    if (language !== 'de' && language !== 'en') {
+      io.err(`The language "${language}" is not one of de, en.`);
+      return 2;
+    }
+    if (io.files.read(path.join(target, settingsFile)) !== undefined) {
+      io.err(`${path.relative(io.cwd, path.join(target, settingsFile)) || settingsFile} exists: the folder already holds a course. Print the rules with "${command} instructions".`);
+      return 2;
+    }
+    for (const each of newCourse(path.basename(target), language)) {
+      const file = path.join(target, each.file);
+      const shown = path.relative(io.cwd, file).split(path.sep).join('/');
+      if (io.files.read(file) !== undefined) {
+        io.out(`${shown}: kept, it exists`);
+      } else {
+        io.writeFile(file, each.text);
+        io.out(`${shown}: written`);
+      }
+    }
+    io.err(`Next: print the rules of a topic with "${command} instructions <topic>", and write the own rules of the course into .course/instructions/.`);
     return 0;
   }
 

@@ -6,18 +6,22 @@ Licensed under the MIT License. See LICENSE in the repository root for details.
 
 # The format of the files of a course
 
-These are the rules for the files of a course in a Git repository: the
-README of the course, the README of each chapter, the README of each
-assignment and the feedback file of each assignment. They are for people and
-for AI agents. The course module of nimblescape reads these files as
-structured data, and `course check` reports each place where a file differs
-from these rules. Print the rules of one topic with
+These are the rules for the files of a course in a Git repository. Programs
+read the README of the course, the README of each chapter, the README of each
+assignment and the feedback file of each assignment. People read the tutorial
+pages, the walkthroughs, the course plan, the cheat sheet and the overviews of
+the folders. The rules are for people and for AI agents. The course module of
+nimblescape reads the files as structured data, and `cs check` reports each
+place where a file differs from these rules. Print the rules of one topic with
 `npx -y @nimblescape/course instructions <topic>`; the topics are `course`,
-`chapter`, `assignment`, `objectives` and `feedback`.
+`chapter`, `assignment`, `objectives`, `feedback`, `tutorial`, `walkthrough`,
+`plan`, `cheat-sheet` and `overview`.
 
-A course keeps only its own rules in its repository: its students, its
-language, its conventions and the topics of its chapters. The forms of the
-files are the rules of this document, and a course does not copy them.
+A course keeps only its own rules in its repository, in the folder
+`.course/instructions/` (section 2): its students, its language, its
+conventions and the topics of its chapters. The forms of the files are the
+rules of this document, and a course does not copy them. `cs create <folder>`
+writes the files of a new course.
 
 ## 1. The comment of the format
 
@@ -35,8 +39,10 @@ and follow them. Keep this comment as it is.
 
 - The first line names the format `nimblescape-course`, its version, the
   kind of the file and the address of this document. The kind is `course`,
-  `chapter`, `assignment` or `feedback`, and it decides the rules of the
-  file. The command in the comment prints the rules of that kind.
+  `chapter`, `assignment`, `feedback`, `tutorial`, `walkthrough`, `plan`,
+  `cheat-sheet` or `overview`, and it decides the rules of the file. The
+  command in the comment prints the rules of that kind and the own rules of
+  the course.
 - The comment stands at the start of the file, with a blank line after it.
   The comment of another format, for example of nimblescape Markdown Notes
   in a README with notes, may stand before or after it; both stand at the
@@ -50,14 +56,15 @@ and follow them. Keep this comment as it is.
   anew only when its own version is higher than the version in the file. A
   program that finds a higher major version changes nothing in the file and
   says why.
-- `course format` writes the comment into each README of a course that has
-  none, and the course extension of VS Code writes it when a README of a
-  course is saved.
+- `cs format` writes the comment into each file of a course that has none,
+  and the course extension of VS Code writes it when a file of a course is
+  saved.
 
 ## 2. The settings of a course
 
 The file `.course/course.yml` holds the settings of a course. The folder
-`.course/` holds only the files of the course module.
+`.course/` holds only the files of the course module: the settings and the
+own rules of the course.
 
 ```yaml
 course: ts-2
@@ -73,13 +80,45 @@ assignments: 20-assignments/*/*/README.md
 | `readme` | The README of the course. | `README.md` |
 | `chapters` | The pattern of the README files of the chapters. | `10-course/10-tutorials/*/README.md` |
 | `assignments` | The pattern of the README files of the assignments. | `20-assignments/*/*/README.md` |
+| `tutorials` | The pattern of the tutorial pages. | `10-course/10-tutorials/*/*.md` |
+| `walkthroughs` | The pattern of the README files of the walkthroughs. | `10-course/20-sessions/*/README.md` |
+| `plan` | The README of the walkthroughs with the course plan. | `10-course/20-sessions/README.md` |
+| `cheat-sheet` | The cheat sheet. | `reference-material/10-cheat-sheet.md` |
+| `overviews` | The patterns of the overviews of the folders. | `10-course/README.md`, `10-course/10-tutorials/README.md`, `20-assignments/README.md`, `20-assignments/*/README.md`, `reference-material/README.md` |
 
 A pattern is a path relative to the folder of the course; `*` stands for any
 part of one name and `**` for any number of folders. A pattern may also be a
-list of patterns. The kind in the comment of the format of a file wins over
-the patterns: a file with a comment is read with the rules of its kind,
-wherever it is. The patterns find the files that have no comment yet, so
-that `course check` reports them and `course format` writes their comment.
+list of patterns. When a file matches several patterns, the first field of the
+table decides its kind: the README of a chapter matches the pattern of the
+tutorial pages too, and it is a chapter. The kind in the comment of the format
+of a file wins over the patterns: a file with a comment is read with the rules
+of its kind, wherever it is. The patterns find the files that have no comment
+yet, so that `cs check` reports them and `cs format` writes their comment.
+
+*The own rules of a course.* The folder `.course/instructions/` holds the
+rules of the course that this document does not give, in Markdown files:
+
+- `all.md` holds the rules for every file of the course, for example its
+  students, its language, its conventions of code and which concepts a
+  chapter may use.
+- `<topic>.md` holds the rules for the files of one topic, for example
+  `chapter.md` or `assignment.md`.
+- A file with another name is a topic of the course, for example
+  `essentials.md`.
+
+`cs instructions <topic>` prints the rules of the topic from this document,
+then `all.md`, then `<topic>.md`. Without a topic it lists the topics of this
+document and of the course. The comment of the format in each file names the
+command, so an AI agent finds the own rules of the course through it. The
+folder starts with a dot like `.github/`, so the rules for the authors of the
+course stay apart from the material for the students.
+
+*A new course.* `cs create <folder> [--language de|en]` writes the files of
+a new, empty course into a folder: `.course/course.yml`,
+`.course/instructions/all.md`, the README of the course, the overviews of the
+folders, the plan of the walkthroughs and the cheat sheet, each with the
+comment of the format of its kind. It keeps each file that exists, and it
+writes nothing into a folder that already holds `.course/course.yml`.
 
 ## 3. The names of the sections
 
@@ -114,6 +153,26 @@ assignment; programs do not read them.
 | Feedback | Program run | `**Ausgeführt:**` | `**Run:**` |
 | Feedback | Commits | ``**Commits in `workspace/`:**`` | ``**Commits in `workspace/`:**`` |
 | Feedback | Score | `**Ergebnis: <n> %**` | `**Score: <n> %**` |
+| Tutorial page | Common mistakes | `## Häufige Fehler` | `## Common Mistakes` |
+| Tutorial page | Try it | `## Probier es aus` | `## Try It` |
+| Walkthrough | Title | `# Walkthrough: <name>` | `# Walkthrough: <name>` |
+| Walkthrough | Chapter | `**Kapitel:**` | `**Chapter:**` |
+| Walkthrough | Double lessons | `**Doppelstunden:**` | `**Double lessons:**` |
+| Walkthrough | Inputs | `**Inputs:**` or `**Input:**` | `**Inputs:**` or `**Input:**` |
+| Walkthrough | Learning objectives | `## Lernziele` | `## Learning Objectives` |
+| Walkthrough | Before you start | `## Vorbereitung` | `## Before You Start` |
+| Walkthrough | Opening question | `## Einstiegsfrage (optional)` | `## Opening Question (optional)` |
+| Walkthrough | Input | `## Input – <name> (≈ <n> min)`, `## Input A – <name> (≈ <n> min)` | `## Input – <name> (≈ <n> min)`, `## Input A – <name> (≈ <n> min)` |
+| Walkthrough | Hand-off | `### Übergabe`, `### Übergabe A` | `### Hand-off`, `### Hand-off A` |
+| Walkthrough | Work time | `## Während der Arbeitszeit` | `## During the Work Time` |
+| Walkthrough | Stumbling blocks | `### Stolpersteine` | `### Stumbling Blocks` |
+| Walkthrough | Mini-inputs | `### Mini-Inputs bei Bedarf (≤ 5 min)` | `### Mini-Inputs on Demand (≤ 5 min)` |
+| Walkthrough | Differentiation | `### Differenzierung` | `### Differentiation` |
+| Walkthrough | Closing reflection | `## Abschlussreflexion (optional)` | `## Closing Reflection (optional)` |
+| Walkthrough | Material | `## Material` | `## Material` |
+| Plan | Course plan | `## Kursplan` | `## Course Plan` |
+| Plan | Walkthroughs | `## Walkthroughs` | `## Walkthroughs` |
+| Cheat sheet | Title | `# Cheat Sheet` | `# Cheat Sheet` |
 
 ## 4. The README of the course
 
@@ -300,9 +359,214 @@ it.
   `## Update – <time>`, a line about the changes, and the same sections one
   level lower (`###`). An update never changes earlier text.
 
-## 9. Checks
+## 9. A tutorial page
 
-`course check [folder]` reports each place where a file of a course differs
+A tutorial page explains one topic of a chapter to the students. It is a file
+`<chapter>.<n>-<topic>.md` in the folder of its chapter, next to the README of
+the chapter, for example `08.02-while-loops.md`: the number of the chapter, a
+dot, the number of the page in the chapter with two digits, and the topic in
+lowercase English words with hyphens. Its comment of the format has the kind
+`tutorial`.
+
+```markdown
+# while-Loops
+
+Eine `while`-Loop wiederholt Statements, solange eine Bedingung gilt …
+
+📺 _Video-Tutorial: folgt in Kürze._
+
+## Die Bedingung
+
+## Häufige Fehler
+
+## Probier es aus
+
+📖 MDN: [while](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/while)
+```
+
+- *Title.* A heading of the first level with the name of the topic.
+- *Introduction.* One or two short paragraphs: what the page explains and
+  why it matters.
+- *Video.* After the introduction, a paragraph that starts with 📺: the link
+  to the video of the page, or a placeholder until the video exists.
+- *Sections.* One section of the second level for each concept of the page,
+  with a short explanation and small examples that work. A page explains
+  only what the course has taught up to its chapter, and what the page
+  itself teaches.
+- *Common mistakes* and *Try it* are optional sections with the names of
+  section 3: the typical mistakes with their fixes, and a small exercise for
+  the playground of the students.
+- *Documentation.* The last paragraph before the end of the page may start
+  with 📖 and link the documentation of the topic, for example MDN.
+- The README of the chapter links each tutorial page in its section of the
+  tutorials, in the order of the numbers. The walkthrough of the chapter
+  shows each concept of the page in one of its inputs, with a link to the
+  section of the page.
+
+## 10. A walkthrough
+
+A walkthrough is the guided path of the teacher through the tutorial pages
+of one chapter: short live demonstrations, the hand-off to the assignments
+and the work time. Each walkthrough is the README of its own folder, which
+also holds the files that the teacher writes live during an input. Its
+comment of the format has the kind `walkthrough`.
+
+```markdown
+# Walkthrough: Types
+
+**Kapitel:** [03 – Types](../../10-tutorials/03-types/README.md)\
+**Doppelstunden:** 2 (Doppelstunden 6–7 des [Kursplans](../README.md#kursplan))\
+**Inputs:** A – Types sehen und umwandeln (≈ 30 min) · B – undefined, null und NaN (≈ 15 min)
+
+## Lernziele
+
+## Vorbereitung
+
+## Einstiegsfrage (optional)
+
+## Input A – Types sehen und umwandeln (≈ 30 min)
+
+1. **Den Type sehen** (≈ 4 min) –
+   [03.01 › Den Type sehen](../../10-tutorials/03-types/03.01-number-string-boolean.md#den-type-sehen)
+   - Zeigen: Hover über `age`, `typeof` für Zahl, String und Boolean.
+   - Kernpunkt: Jeder Wert hat einen Type.
+
+### Übergabe A
+
+## Input B – undefined, null und NaN (≈ 15 min)
+
+### Übergabe B
+
+## Während der Arbeitszeit
+
+### Stolpersteine
+
+### Mini-Inputs bei Bedarf (≤ 5 min)
+
+### Differenzierung
+
+## Abschlussreflexion (optional)
+
+## Material
+```
+
+- *Lessons.* The course is taught in double lessons of 2 × 50 minutes. A
+  double lesson starts with at most one input of at most 30 minutes, input A
+  or B of the current chapter; the rest of the double lesson is work time.
+  During the work time the teacher coaches single students and gives a
+  mini-input of at most 5 minutes when several students have the same
+  problem. A chapter takes one or more double lessons.
+- *Title.* `# Walkthrough: <name of the chapter>`.
+- *Head.* One paragraph with three lines: the link to the README of the
+  chapter, the number of double lessons with their numbers in the course
+  plan, and the inputs with their letters, names and minutes. A chapter with
+  one input writes `**Input:**`.
+- *Learning objectives.* The learning objectives of the chapter as a list,
+  in short words for the teacher.
+- *Before you start.* What the students must have done, and what the
+  teacher prepares.
+- *Opening question* (optional). A question that activates what the
+  students know, in two or three minutes.
+- *Inputs.* `## Input – <name> (≈ <n> min)` for one input, or
+  `## Input A – …`, `## Input B – …` for several, each of at most 30
+  minutes. An input is a numbered list of steps. A step names its topic in
+  bold, its minutes and the links to the sections of the tutorial pages that
+  it shows, and has two items: what the teacher shows ("Zeigen:", "Show:")
+  and the key point ("Kernpunkt:", "Point:"). The last step is the hand-off.
+- *Hand-off.* A section of the third level in each input,
+  `### Übergabe A` or `### Hand-off A`: which assignment the students start,
+  and that an assignment is finished when each requirement of its README is
+  met.
+- *Work time.* The section of the work time has three sections of the third
+  level: the stumbling blocks of the students, the mini-inputs on demand,
+  and the differentiation, with tasks for fast and for slower students.
+- *Closing reflection* (optional). A short round at the end of a double
+  lesson or of the chapter.
+- *Material.* Links to the chapter, to its assignments and to documentation.
+- Other sections may stand between them, for example a presentation round in
+  the final project.
+- Each concept of each tutorial page of the chapter is shown in one of the
+  inputs. When a tutorial page gains a concept, the walkthrough gains it in
+  the same change. The videos of the course are recorded from the inputs.
+
+## 11. The course plan
+
+The README of the folder of the walkthroughs holds the course plan. Its
+comment of the format has the kind `plan`.
+
+- It may explain how a double lesson works and how a walkthrough is built,
+  for the teachers of the course.
+- *Course plan.* The section `## Kursplan` or `## Course Plan` has a table
+  with three columns: the double lesson, the input, and the assignments that
+  the students work on. A double lesson without an input names the
+  mini-inputs on demand or a presentation round in the column of the input.
+  A sentence after the table gives the number of double lessons of the
+  course.
+- *Walkthroughs.* The section `## Walkthroughs` links each walkthrough, in
+  the order of the chapters, with its number of double lessons.
+- The numbers of the double lessons in the head of each walkthrough are the
+  numbers of its rows in the course plan. When a chapter needs more or fewer
+  double lessons, the course plan changes in the same change.
+
+## 12. The cheat sheet
+
+The cheat sheet is a side note for the students while they work on the
+assignments: the syntax, the names and the rules of the course in short
+form, one section per chapter. It is no reference: the explanations and
+complete examples are in the chapters. Its comment of the format has the
+kind `cheat-sheet`.
+
+```markdown
+# Cheat Sheet
+
+<One or two sentences: short notes for the assignments, one section per
+chapter; the explanations and the examples are in the chapters.>
+
+## Loops (08)
+
+<one section per chapter, in the order of the chapters>
+```
+
+- *Title.* `# Cheat Sheet`, then one or two sentences.
+- *Sections.* One section for each chapter, in the order of the chapters.
+  The heading is the name of the chapter as in its README and its number in
+  brackets: `## Loops (08)`.
+- *Content*, each part optional, in this order: one code block of at most 10
+  lines, one construct per line with a short comment at the end of the line
+  that says what it is or what it does, never a complete program; one table
+  of at most 10 rows, a look-up list with the code or the case in its first
+  column (two tables only in the section of the last chapter); at most four
+  items of a list with rules and typical mistakes, one or two lines each.
+- *Last paragraph.* It starts with 📖, links the README of the chapter and at
+  most two pages of documentation:
+  `📖 [08 – Loops](../10-course/10-tutorials/08-loops/README.md) · MDN: [Loops and iteration](<url>)`.
+- A section has at most 25 lines without its blank lines and without its last
+  paragraph.
+- Not in a cheat sheet: explanations of why, complete examples, several
+  examples of the same thing, pictures and exercises. A section uses only
+  what the course has taught up to its chapter, with the names of the
+  documentation that it links.
+- When a chapter changes its syntax or its rules, its section changes in the
+  same change.
+
+## 13. An overview
+
+An overview is the README of a folder that leads to the files of the folder:
+for example the folder of the course material, of the chapters, of the
+assignments, of the assignments of one chapter, or of the reference material.
+Its comment of the format has the kind `overview`.
+
+- A title, a short introduction, and a list of links with one line about
+  each file.
+- It links each other Markdown file of its folder and the README of each
+  folder inside it, in the order of their names. When a chapter, an
+  assignment or a page is added, removed or renamed, the overview changes in
+  the same change.
+- The course plan (section 11) is the overview of the walkthroughs.
+
+## 14. Checks
+
+`cs check [folder]` reports each place where a file of a course differs
 from these rules, with the file and the line:
 
 - a missing comment of the format, a comment with an unknown kind, or a
@@ -322,6 +586,20 @@ from these rules, with the file and the line:
 - a feedback file without the comment of the format, without one of its
   sections or its score, or whose items of the requirements are not numbered
   from 1 in their order;
+- a tutorial page without its title or its video, with a name that does not
+  start with the number of its chapter, or that the README of its chapter
+  does not link;
+- a walkthrough without its title, its head, its sections, a hand-off in
+  each input or the minutes of an input; an input of more than 30 minutes;
+  and a tutorial page of its chapter that it does not link;
+- a course plan without its table of three columns;
+- a cheat sheet without a section of a chapter, a section whose heading is
+  not the name and the number of a chapter or that stands out of the order
+  of the chapters, a section without its last paragraph with the link to its
+  chapter, and a section over its limits of code blocks, tables, items and
+  lines;
+- an overview or a course plan that does not link a Markdown file or a README
+  of a folder of its folder;
 - a field of `.course/course.yml` that the module does not know, and a
   language that it does not know.
 

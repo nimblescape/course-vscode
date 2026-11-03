@@ -11,9 +11,9 @@
  * - shows the structure of the courses in the view "Course" of the explorer;
  * - shows the checks of the files of a course as warnings, after a pause in typing
  *   (`nimblescape.course.checkDelay`);
- * - writes the comment of the format into a README of a course when it is saved
+ * - writes the comment of the format into a file of a course when it is saved
  *   (`nimblescape.course.addFormatComment`), but not with the auto save after a delay;
- * - adds the comments of the format to all README files of a course with "Add Format Comments".
+ * - adds the comments of the format to all files of a course with "Add Format Comments".
  *
  * The adapter of the reflection tool
  * ([R-COURSE-011](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-011)) comes with the
@@ -135,7 +135,7 @@ export function activate(context: vscode.ExtensionContext): Api {
         }
       }
       if (changed.length === 0) {
-        void vscode.window.showInformationMessage('Each README of the courses has the comment of the format.');
+        void vscode.window.showInformationMessage('Each file of the courses has the comment of the format.');
         return;
       }
       if (await vscode.workspace.applyEdit(edit)) {

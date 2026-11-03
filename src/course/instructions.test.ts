@@ -30,9 +30,30 @@ describe('the instructions', () => {
   });
 
   it('lists the topics, and knows no other topic', () => {
-    expect(topicList('course')).toContain('  assignment  ');
-    expect(topicList('course')).toContain('Print one: course instructions <topic>');
+    expect(topicList('cs')).toContain('  assignment  ');
+    expect(topicList('cs')).toContain('  cheat-sheet ');
+    expect(topicList('cs')).toContain('Print one: cs instructions <topic>');
+    expect(topicList('cs')).toContain('Start a new course: cs create <folder> [--language de|en]');
     expect(topicText('lesson')).toBeUndefined();
+  });
+
+  it('adds the own rules of the course for every file and for the topic, and the topics of the course', () => {
+    const rules = new Map([
+      ['all', '## Language\n\nGerman texts.'],
+      ['walkthrough', '## Videos\n\nThe videos follow the inputs.'],
+      ['essentials', '# Essentials\n\nFrom another repository.'],
+    ]);
+    const text = topicText('walkthrough', rules)!;
+    expect(text.indexOf('## 10. A walkthrough')).toBeLessThan(text.indexOf('# The rules of this course'));
+    expect(text.indexOf('German texts.')).toBeLessThan(text.indexOf('The videos follow the inputs.'));
+    expect(text).toContain('`all.md` for every file and `walkthrough.md`');
+    expect(topicText('chapter', rules)).toContain('German texts.');
+    expect(topicText('chapter', rules)).not.toContain('The videos follow the inputs.');
+    expect(topicText('chapter')).not.toContain('# The rules of this course');
+    expect(topicText('essentials', rules)).toMatch(/^# The rules of this course/);
+    expect(topicText('all', rules)).toBeUndefined();
+    expect(topicList('cs', rules)).toContain('Topics of this course, from .course/instructions/:');
+    expect(topicList('cs', rules)).toMatch(/ {2}essentials +Essentials/);
   });
 });
 
@@ -58,6 +79,17 @@ describe('docs/format.md', () => {
         `\`## ${language.feedback.summary}\``,
         `\`**${language.feedback.run}:**\``,
         `**${language.feedback.score}: <n> %**`,
+        ...[language.tutorial.mistakes, language.tutorial.tryIt].flat().map((name) => `\`## ${name}\``),
+        `\`# ${language.walkthrough.title}: <name>\``,
+        ...[language.walkthrough.chapter, language.walkthrough.lessons, ...language.walkthrough.inputs].map((name) => `\`**${name}:**\``),
+        ...[language.walkthrough.objectives, language.walkthrough.prepare, language.walkthrough.opening, language.walkthrough.workTime, language.walkthrough.closing, language.walkthrough.material]
+          .flat()
+          .map((name) => `\`## ${name}\``),
+        `\`## ${language.walkthrough.input} – <name> (≈ <n> min)\``,
+        `\`### ${language.walkthrough.handOff}\``,
+        ...[language.walkthrough.stumbling, language.walkthrough.miniInputs, language.walkthrough.differentiation].flat().map((name) => `\`### ${name}\``),
+        ...[language.plan.coursePlan, language.plan.walkthroughs].flat().map((name) => `\`## ${name}\``),
+        `\`# ${language.cheatSheet}\``,
       ];
       for (const name of names) {
         expect(table, `${language.code}: ${name}`).toContain(name);
