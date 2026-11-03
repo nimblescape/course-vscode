@@ -36,8 +36,14 @@ import { AnswerError, answerForm, feedbackFile, feedbackPart, parseAnswer } from
 import { readCourseRules, topicList, topicText } from '../course/instructions';
 import { languageOf } from '../course/languages';
 
-/** command is the name of the command, the `bin` of cli/package.json, as the shell calls it. */
-export const command = 'cs';
+/** packageName is the name of the npm package of the command. */
+export const packageName = '@nimblescape/course';
+
+/**
+ * command is the command as AI agents and people run it: with npx, without an installation. The `bin` of
+ * cli/package.json is `cs`, the program that npx starts.
+ */
+export const command = `npx -y ${packageName}`;
 
 /** usage is the help of the command. */
 export const usage = [
@@ -102,7 +108,7 @@ export function run(args: readonly string[], io: Io): number {
     return args.length === 0 ? 2 : 0;
   }
   if (args.includes('--version')) {
-    io.out(`${command} ${version}, format nimblescape-course v${versionText(formatVersion)}`);
+    io.out(`${packageName} ${version}, format nimblescape-course v${versionText(formatVersion)}`);
     return 0;
   }
   const [name, ...rest] = args;

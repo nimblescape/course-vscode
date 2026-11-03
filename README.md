@@ -24,8 +24,8 @@ from its form as a warning.
   not run in VS Code for the Web.
 - **Files.** The extension reads the Markdown files of each course of the
   workspace and its settings `.course/course.yml`. A course is a folder of
-  the workspace with `.course/course.yml`; `cs create` writes the file for a
-  new course. A repository with README files of chapters or assignments but
+  the workspace with `.course/course.yml`;
+  `npx -y @nimblescape/course create` writes the file for a new course. A repository with README files of chapters or assignments but
   without this file, for example a course from before the format, is no
   course for the extension. It changes the text of
   a file only when you save a file of a course without the comment of the
@@ -93,17 +93,17 @@ names every field and its default.
 
 ## Command line
 
-The npm package `@nimblescape/course` has the command `cs` with the same
-reader and checks, for a terminal, for CI and for programs in other
-languages:
+The npm package `@nimblescape/course` has a command with the same reader and
+checks, for a terminal, for CI and for programs in other languages. AI agents
+and people run it with npx, without an installation:
 
 ```sh
-cs instructions assignment   # prints the rules of an assignment README and of the course
-cs check                     # reports each place where a file differs from its form
-cs format                    # writes the comment of the format into each file
-cs read 20-assignments/01-loops/01.01-count   # prints the assignment as JSON
-cs create my-course --language de             # writes the files of a new course
-cs feedback 20-assignments/01-loops/01.01-count answer.json   # writes FEEDBACK.md from the answer of an AI model
+npx -y @nimblescape/course instructions assignment   # prints the rules of an assignment README and of the course
+npx -y @nimblescape/course check                     # reports each place where a file differs from its form
+npx -y @nimblescape/course format                    # writes the comment of the format into each file
+npx -y @nimblescape/course read 20-assignments/01-loops/01.01-count   # prints the assignment as JSON
+npx -y @nimblescape/course create my-course --language de             # writes the files of a new course
+npx -y @nimblescape/course feedback 20-assignments/01-loops/01.01-count answer.json   # writes FEEDBACK.md from the answer of an AI model
 ```
 
 The [README of the package](https://github.com/nimblescape/course-vscode/blob/main/cli/README.md)
@@ -120,10 +120,10 @@ describes each command and the library.
 
 - The extension reads the files of the course from the disk of this
   computer, so it does not work in a virtual workspace.
-- The feedback program writes the feedback files with `cs feedback`. The
-  extension shows a feedback file without the comment of the format as a
-  warning, but does not add the comment, because a person or the extension
-  does not change a feedback file.
+- The feedback program writes the feedback files with the command `feedback`
+  of the npm package. The extension shows a feedback file without the comment
+  of the format as a warning, but does not add the comment, because a person
+  or the extension does not change a feedback file.
 - The adapter that gives the reflection tool of nimblescape the objectives,
   requirements and feedback of a course comes with the reflection extension,
   which does not exist yet.

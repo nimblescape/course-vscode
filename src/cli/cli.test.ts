@@ -29,14 +29,14 @@ describe('the command cs', () => {
   it('shows the help without a command, with exit code 2, and with --help, with exit code 0', () => {
     const run1 = io(nodeFiles, fixture);
     expect(run([], run1.io)).toBe(2);
-    expect(run1.out.join('\n')).toContain('Usage: cs <command>');
+    expect(run1.out.join('\n')).toContain('Usage: npx -y @nimblescape/course <command>');
     expect(run(['--help'], io(nodeFiles, fixture).io)).toBe(0);
   });
 
   it('shows the version of the command and of the format', () => {
     const each = io(nodeFiles, fixture);
     expect(run(['--version'], each.io)).toBe(0);
-    expect(each.out[0]).toMatch(/^cs \d+\.\d+\.\d+, format nimblescape-course v1\.0\.0$/);
+    expect(each.out[0]).toMatch(/^@nimblescape\/course \d+\.\d+\.\d+, format nimblescape-course v1\.0\.0$/);
   });
 
   it('rejects an unknown command, an unknown option and a second operand', () => {

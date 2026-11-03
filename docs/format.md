@@ -11,8 +11,10 @@ read the README of the course, the README of each chapter, the README of each
 assignment and the feedback file of each assignment. People read the tutorial
 pages, the walkthroughs, the course plan, the cheat sheet and the overviews of
 the folders. The rules are for people and for AI agents. The course module of
-nimblescape reads the files as structured data, and `cs check` reports each
-place where a file differs from these rules. Print the rules of one topic with
+nimblescape reads the files as structured data, and its command reports each
+place where a file differs from these rules. AI agents and people run the
+command with `npx -y @nimblescape/course <command>`, without an installation.
+Print the rules of one topic with
 `npx -y @nimblescape/course instructions <topic>`; the topics are `course`,
 `chapter`, `assignment`, `objectives`, `feedback`, `tutorial`, `walkthrough`,
 `plan`, `cheat-sheet` and `overview`.
@@ -20,8 +22,8 @@ place where a file differs from these rules. Print the rules of one topic with
 A course keeps only its own rules in its repository, in the folder
 `.course/instructions/` (section 2): its students, its language, its
 conventions and the topics of its chapters. The forms of the files are the
-rules of this document, and a course does not copy them. `cs create <folder>`
-writes the files of a new course.
+rules of this document, and a course does not copy them.
+`npx -y @nimblescape/course create <folder>` writes the files of a new course.
 
 ## 1. The comment of the format
 
@@ -56,9 +58,9 @@ and follow them. Keep this comment as it is.
   anew only when its own version is higher than the version in the file. A
   program that finds a higher major version changes nothing in the file and
   says why.
-- `cs format` writes the comment into each file of a course that has none,
-  and the course extension of VS Code writes it when a file of a course is
-  saved.
+- `npx -y @nimblescape/course format` writes the comment into each file of a
+  course that has none, and the course extension of VS Code writes it when a
+  file of a course is saved.
 
 ## 2. The settings of a course
 
@@ -93,7 +95,8 @@ table decides its kind: the README of a chapter matches the pattern of the
 tutorial pages too, and it is a chapter. The kind in the comment of the format
 of a file wins over the patterns: a file with a comment is read with the rules
 of its kind, wherever it is. The patterns find the files that have no comment
-yet, so that `cs check` reports them and `cs format` writes their comment.
+yet, so that `npx -y @nimblescape/course check` reports them and
+`npx -y @nimblescape/course format` writes their comment.
 
 *The own rules of a course.* The folder `.course/instructions/` holds the
 rules of the course that this document does not give, in Markdown files:
@@ -106,15 +109,15 @@ rules of the course that this document does not give, in Markdown files:
 - A file with another name is a topic of the course, for example
   `essentials.md`.
 
-`cs instructions <topic>` prints the rules of the topic from this document,
-then `all.md`, then `<topic>.md`. Without a topic it lists the topics of this
-document and of the course. The comment of the format in each file names the
+`npx -y @nimblescape/course instructions <topic>` prints the rules of the
+topic from this document, then `all.md`, then `<topic>.md`. Without a topic it
+lists the topics of this document and of the course. The comment of the format in each file names the
 command, so an AI agent finds the own rules of the course through it. The
 folder starts with a dot like `.github/`, so the rules for the authors of the
 course stay apart from the material for the students.
 
-*A new course.* `cs create <folder> [--language de|en]` writes the files of
-a new, empty course into a folder: `.course/course.yml`,
+*A new course.* `npx -y @nimblescape/course create <folder> [--language de|en]`
+writes the files of a new, empty course into a folder: `.course/course.yml`,
 `.course/instructions/all.md`, the README of the course, the overviews of the
 folders, the plan of the walkthroughs and the cheat sheet, each with the
 comment of the format of its kind. It keeps each file that exists, and it
@@ -359,10 +362,12 @@ it.
   `## Update – <time>`, a line about the changes, and the same sections one
   level lower (`###`). An update never changes earlier text.
 
-The feedback program writes the file with `cs feedback <assignment>
-<answer>`: the command checks the answer of the AI model (its form prints
-`cs feedback --form <assignment>`), computes the score, and writes the first
-feedback with the comment of the format or appends an update. It adds the
+The feedback program writes the file with
+`npx -y @nimblescape/course feedback <assignment> <answer>`: the command checks
+the answer of the AI model (its form prints
+`npx -y @nimblescape/course feedback --form <assignment>`), computes the score,
+and writes the first feedback with the comment of the format or appends an
+update. It adds the
 comment of the format to an older file without it.
 
 ### Judging the work
@@ -419,11 +424,11 @@ The rules of judging:
 Each requirement gets one status: `met` (✅), `partly` (⚠️) or `missing` (❌).
 The status agrees with its comment: when the comment names something that is
 missing, wrong or against a rule of the README, the status is `partly` or
-`missing`, never `met`. `cs feedback` computes the score from the statuses:
-met 1 point, partly ½, missing 0, divided by the number of requirements. It
-limits the score to 50 % when a check of the feedback program shows that the
-work does not run. Never write a score or a percentage yourself. Be strict on
-requirements and generous on creativity.
+`missing`, never `met`. The command `feedback` computes the score from the
+statuses: met 1 point, partly ½, missing 0, divided by the number of
+requirements. It limits the score to 50 % when a check of the feedback program
+shows that the work does not run. Never write a score or a percentage
+yourself. Be strict on requirements and generous on creativity.
 
 ### Best practices
 
@@ -708,8 +713,8 @@ Its comment of the format has the kind `overview`.
 
 ## 14. Checks
 
-`cs check [folder]` reports each place where a file of a course differs
-from these rules, with the file and the line:
+`npx -y @nimblescape/course check [folder]` reports each place where a file of
+a course differs from these rules, with the file and the line:
 
 - a missing comment of the format, a comment with an unknown kind, or a
   comment of a higher major version;

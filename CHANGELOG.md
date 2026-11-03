@@ -25,6 +25,7 @@ The first version.
 - When you save a file of a course without the comment of the format, the
   extension writes the comment at the top of the file. The command "Add Format
   Comments" writes it into every file of the course.
-- The npm package `@nimblescape/course` installs the command `cs`:
-  `cs instructions`, `cs check`, `cs format`, `cs read`, `cs create` and
-  `cs feedback`.
+- The npm package `@nimblescape/course` has the commands `instructions`,
+  `check`, `format`, `read`, `create` and `feedback`. AI agents and people run
+  them with npx, without an installation:
+  `npx -y @nimblescape/course <command>`.

@@ -293,7 +293,7 @@ export function loadCourse(folder: string, files: Files = nodeFiles): Loaded {
       continue;
     }
     if (!comment) {
-      problems.push({ file, line: 1, code: 'missing-comment', message: `The file has no comment of the format; \`cs format\` writes it: <!-- nimblescape-course v${versionText(formatVersion)} ${kind} spec=…` });
+      problems.push({ file, line: 1, code: 'missing-comment', message: `The file has no comment of the format; \`npx -y @nimblescape/course format\` writes it: <!-- nimblescape-course v${versionText(formatVersion)} ${kind} spec=…` });
     }
     courseFiles.push({ file, kind, commented: comment !== undefined });
   }
