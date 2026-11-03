@@ -1,0 +1,50 @@
+{
+  "name": "@nimblescape/course",
+  "version": "0.1.0",
+  "description": "The command course and its library: the files of a course in a Git repository in one form for people, AI agents and programs. It prints the rules of the files for AI agents, reads a course into JSON, checks the files against their form and writes the comment of the format, as the VS Code extension nimblescape Course does.",
+  "license": "MIT",
+  "author": {
+    "name": "nimblescape e.U.",
+    "url": "https://nimblescape.com"
+  },
+  "homepage": "https://github.com/nimblescape/course-vscode#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nimblescape/course-vscode.git",
+    "directory": "cli"
+  },
+  "bugs": {
+    "url": "https://github.com/nimblescape/course-vscode/issues"
+  },
+  "keywords": [
+    "course",
+    "markdown",
+    "learning-objectives",
+    "bloom",
+    "feedback",
+    "ai-agents"
+  ],
+  "bin": {
+    "course": "dist/course.js"
+  },
+  "main": "dist/index.js",
+  "types": "index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist/*.js",
+    "index.d.ts",
+    "THIRD-PARTY-NOTICES.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

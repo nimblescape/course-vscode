@@ -1,0 +1,179 @@
+{
+  "name": "nimblescape-course",
+  "displayName": "nimblescape Course",
+  "description": "The files of a course in a Git repository in one form for people, AI agents and programs: the README of the course, of each chapter with its learning objectives and of each assignment with its requirements, and the feedback file of each assignment. A view shows the chapters, learning objectives, assignments and requirements of a course, and the text editor shows where a file differs from its form.",
+  "publisher": "nimblescape",
+  "author": {
+    "name": "nimblescape e.U.",
+    "url": "https://nimblescape.com"
+  },
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.125.0"
+  },
+  "categories": [
+    "Education",
+    "Other"
+  ],
+  "keywords": [
+    "course",
+    "markdown",
+    "learning objectives",
+    "bloom",
+    "assignments",
+    "feedback"
+  ],
+  "license": "MIT",
+  "homepage": "https://nimblescape.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nimblescape/course-vscode.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nimblescape/course-vscode/issues"
+  },
+  "pricing": "Free",
+  "preview": true,
+  "qna": "https://github.com/nimblescape/course-vscode/issues",
+  "main": "./dist/extension.js",
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:cli": "node esbuild.mjs && vitest run --config vitest.cli.config.mts",
+    "test:vscode": "node esbuild.mjs && node scripts/build-vscode-tests.mjs && vscode-test --label vscode",
+    "vscode:prepublish": "node esbuild.mjs --production",
+    "package": "vsce package --no-dependencies",
+    "install-local": "node scripts/install-local.mjs",
+    "uninstall-local": "node scripts/uninstall-local.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/markdown-it": "^14.2.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^24.19.2",
+    "@types/vscode": "~1.125.0",
+    "@vscode/test-cli": "^0.0.15",
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.14.0",
+    "globals": "^17.13.0",
+    "markdown-it": "^14.3.3",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.72.1",
+    "vitest": "^5.0.5",
+    "yaml": "^2.9.1"
+  },
+  "extensionKind": [
+    "workspace"
+  ],
+  "activationEvents": [
+    "workspaceContains:.course/course.yml",
+    "onLanguage:markdown"
+  ],
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true,
+      "description": "The extension reads the Markdown files of a course and runs no program of the workspace. It changes the text of a README of a course only when you save it (setting addFormatComment)."
+    },
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "The extension reads the files of a course from the disk of this computer."
+    }
+  },
+  "contributes": {
+    "views": {
+      "explorer": [
+        {
+          "id": "nimblescape.course.structure",
+          "name": "Course",
+          "when": "nimblescape.course.active"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "nimblescape.course.refresh",
+        "title": "Refresh",
+        "category": "Course",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "nimblescape.course.openFeedback",
+        "title": "Open Feedback",
+        "category": "Course",
+        "icon": "$(feedback)"
+      },
+      {
+        "command": "nimblescape.course.check",
+        "title": "Check Course",
+        "category": "Course"
+      },
+      {
+        "command": "nimblescape.course.addFormatComments",
+        "title": "Add Format Comments",
+        "category": "Course"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "nimblescape.course.refresh",
+          "when": "view == nimblescape.course.structure",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "nimblescape.course.openFeedback",
+          "when": "view == nimblescape.course.structure && viewItem == assignmentWithFeedback",
+          "group": "inline"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "nimblescape.course.openFeedback",
+          "when": "false"
+        },
+        {
+          "command": "nimblescape.course.refresh",
+          "when": "nimblescape.course.active"
+        },
+        {
+          "command": "nimblescape.course.check",
+          "when": "nimblescape.course.active"
+        },
+        {
+          "command": "nimblescape.course.addFormatComments",
+          "when": "nimblescape.course.active"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "nimblescape Course",
+      "properties": {
+        "nimblescape.course.addFormatComment": {
+          "type": "boolean",
+          "default": true,
+          "scope": "resource",
+          "markdownDescription": "Write the comment of the format into a README of a course when you save it, if it has none or has one of an older version."
+        },
+        "nimblescape.course.checkDelay": {
+          "type": "number",
+          "default": 800,
+          "minimum": 100,
+          "maximum": 10000,
+          "scope": "window",
+          "markdownDescription": "The pause in typing, in milliseconds, after which the text editor shows the checks of a file of a course again."
+        }
+      }
+    }
+  },
+  "allowScripts": {
+    "esbuild": true,
+    "@vscode/vsce-sign": true,
+    "fsevents": false
+  }
+}
