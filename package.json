@@ -1,7 +1,7 @@
 {
   "name": "nimblescape-course",
   "displayName": "nimblescape Course",
-  "description": "The files of a course in a Git repository in one form for people, AI agents and programs: the README of the course, of each chapter with its learning objectives and of each assignment with its requirements, and the feedback file of each assignment. A view shows the chapters, learning objectives, assignments and requirements of a course, and the text editor shows where a file differs from its form.",
+  "description": "The files of a course in a Git repository in one form for people, AI agents and programs: the README of the course, of each chapter with its learning objectives and of each assignment with its requirements, the feedback file of each assignment, the tutorial pages, the walkthroughs, the course plan and the cheat sheet. A view shows the chapters, learning objectives, assignments and requirements of a course, and the text editor shows where a file differs from its form.",
   "publisher": "nimblescape",
   "author": {
     "name": "nimblescape e.U.",
@@ -76,7 +76,7 @@
   "capabilities": {
     "untrustedWorkspaces": {
       "supported": true,
-      "description": "The extension reads the Markdown files of a course and runs no program of the workspace. It changes the text of a README of a course only when you save it (setting addFormatComment)."
+      "description": "The extension reads the Markdown files of a course and runs no program of the workspace. It changes the text of a file of a course only when you save it (setting addFormatComment)."
     },
     "virtualWorkspaces": {
       "supported": false,
@@ -158,7 +158,7 @@
           "type": "boolean",
           "default": true,
           "scope": "resource",
-          "markdownDescription": "Write the comment of the format into a README of a course when you save it, if it has none or has one of an older version."
+          "markdownDescription": "Write the comment of the format into a file of a course when you save it, if it has none or has one of an older version."
         },
         "nimblescape.course.checkDelay": {
           "type": "number",

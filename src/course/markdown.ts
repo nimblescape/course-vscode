@@ -29,6 +29,8 @@ export interface Item {
   checkbox: string | undefined;
   /** lines are the lines of the item without its marker and its checkbox, and without the indent of the item. */
   lines: string[];
+  /** list is the index of the first line of the list of the item. */
+  list: number;
 }
 
 /** Paragraph is a paragraph at the top level of a file. */
@@ -84,11 +86,11 @@ export const splitLines = (text: string): string[] => text.replace(/\r\n?/g, '\n
  * @param lines - The lines of the item, from its first line to its last line that is not blank.
  * @param line - The index of its first line.
  */
-function itemOf(lines: string[], line: number): Item {
+function itemOf(lines: string[], line: number, list: number): Item {
   const match = listMarker.exec(lines[0]) ?? ['', ''];
   const indent = match[0].length;
   const rest = lines.slice(1).map((text) => (text.slice(0, indent).trim() === '' ? text.slice(indent) : text.trimStart()));
-  return { line, checkbox: match[2]?.toLowerCase(), lines: [lines[0].slice(indent), ...rest] };
+  return { line, checkbox: match[2]?.toLowerCase(), lines: [lines[0].slice(indent), ...rest], list };
 }
 
 /**
@@ -102,6 +104,7 @@ export function blocksOf(text: string): Blocks {
   let table: Table | undefined;
   let row: { line: number; cells: string[] } | undefined;
   let inHeader = false;
+  let list = 0;
   for (let index = 0; index < tokens.length; index++) {
     const token = tokens[index];
     const map = token.map;
@@ -109,12 +112,14 @@ export function blocksOf(text: string): Blocks {
       blocks.headings.push({ level: Number(token.tag.slice(1)), text: tokens[index + 1].content.trim(), line: map[0] });
     } else if (token.type === 'paragraph_open' && token.level === 0 && map) {
       blocks.paragraphs.push({ line: map[0], text: tokens[index + 1].content.split('\n').map((part) => part.trim()).join(' ') });
+    } else if ((token.type === 'bullet_list_open' || token.type === 'ordered_list_open') && token.level === 0 && map) {
+      list = map[0];
     } else if (token.type === 'list_item_open' && token.level === 1 && map) {
       let end = map[1];
       while (end > map[0] + 1 && lines[end - 1].trim() === '') {
         end--;
       }
-      blocks.items.push(itemOf(lines.slice(map[0], end), map[0]));
+      blocks.items.push(itemOf(lines.slice(map[0], end), map[0], list));
     } else if (token.type === 'fence' && token.level === 0 && map) {
       blocks.codes.push({ line: map[0], text: token.content.replace(/\n$/, '') });
     } else if (token.type === 'table_open' && token.level === 0 && map) {
@@ -189,3 +194,19 @@ export function firstParagraph(item: Item): string[] {
 
 /** inlineLink matches a link of Markdown: its text and its target. */
 export const inlineLink = /\[([^\]]*)\]\(([^)\s]+)(?:\s+"[^"]*")?\)/;
+
+/**
+ * describes tells whether an item of a list without a box describes a task: whether the block before its list is a
+ * paragraph that ends with a colon, as in "What the clubs need:".
+ * @param blocks - The blocks of the file.
+ * @param item - The item.
+ */
+export function describes(blocks: Blocks, item: Item): boolean {
+  const before = [
+    ...blocks.paragraphs.map((paragraph) => ({ line: paragraph.line, colon: paragraph.text.trimEnd().endsWith(':') })),
+    ...[...blocks.headings, ...blocks.codes, ...blocks.tables].map((block) => ({ line: block.line, colon: false })),
+    ...blocks.items.map((each) => ({ line: each.line, colon: false })),
+  ].filter((block) => block.line < item.list);
+  const last = before.reduce<{ line: number; colon: boolean } | undefined>((found, block) => (!found || block.line > found.line ? block : found), undefined);
+  return last?.colon === true;
+}

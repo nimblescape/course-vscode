@@ -1,7 +1,7 @@
 {
   "name": "@nimblescape/course",
   "version": "0.1.0",
-  "description": "The command course and its library: the files of a course in a Git repository in one form for people, AI agents and programs. It prints the rules of the files for AI agents, reads a course into JSON, checks the files against their form and writes the comment of the format, as the VS Code extension nimblescape Course does.",
+  "description": "The command cs and its library: the files of a course in a Git repository in one form for people, AI agents and programs. It prints the rules of the files for AI agents, reads a course into JSON, checks the files against their form and writes the comment of the format, as the VS Code extension nimblescape Course does.",
   "license": "MIT",
   "author": {
     "name": "nimblescape e.U.",
@@ -25,7 +25,7 @@
     "ai-agents"
   ],
   "bin": {
-    "course": "dist/course.js"
+    "cs": "dist/cs.js"
   },
   "main": "dist/index.js",
   "types": "index.d.ts",

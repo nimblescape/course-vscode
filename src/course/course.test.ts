@@ -203,9 +203,49 @@ describe('the checks of a course', () => {
 - Loop: It loops.`;
     expect(codes(course({ '20-assignments/01-one/01.01-counter/README.md': assignment(body) }))).toEqual([
       '20-assignments/01-one/01.01-counter/README.md:8 missing-section',
+      '20-assignments/01-one/01.01-counter/README.md:26 no-requirements',
       '20-assignments/01-one/01.01-counter/README.md:28 not-checklist',
       '20-assignments/01-one/01.01-counter/README.md:32 criterion-form',
     ]);
+  });
+
+  it('accepts an assignment without an example, a design reference, other sections and a list that describes the task', () => {
+    const body = `## Your Task
+
+Draw the memory.
+
+## Requirements
+
+### Part A
+
+What the club needs:
+
+- Each event has a title.
+- Each event has a start.
+
+- [ ] A loop. (objective 01.2)
+
+## Optional Extensions
+
+- A second loop.
+
+## Rules
+
+- No list.
+
+## Criteria
+
+- **Loop:** It loops.`;
+    const without = assignment(body).replace(/## Example Run\n\n```\n1\n```\n\n/, '');
+    expect(without).not.toContain('## Example Run');
+    const files = course({ '20-assignments/01-one/01.01-counter/README.md': without, '20-assignments/01-one/01.02-page/README.md': assignment(assignmentBody).replace('## Example Run', '## Design Reference') });
+    expect(codes(files)).toEqual([]);
+    expect(loadCourse(root, files).course.assignments.map((each) => each.requirements.map((requirement) => requirement.text))).toEqual([['A loop.'], ['A loop.']]);
+  });
+
+  it('reports a list without boxes that no paragraph with a colon introduces', () => {
+    const body = assignmentBody.replace('- [ ] A loop. (objective 01.2)', 'The page shows the list.\n\n- A title.\n\n- [ ] A loop. (objective 01.2)');
+    expect(codes(course({ '20-assignments/01-one/01.01-counter/README.md': assignment(body) }))).toEqual(['20-assignments/01-one/01.01-counter/README.md:30 not-checklist']);
   });
 
   it('reports objectives that no chapter has, a level that differs, a later chapter and an objective named twice', () => {
@@ -319,5 +359,221 @@ describe('commentChanges', () => {
     const changes = commentChanges(root, files);
     expect(changes.map((change) => change.file)).toEqual(['20-assignments/01-one/01.01-counter/README.md']);
     expect(changes[0].text).toBe([...commentLines('assignment'), '', '# Assignment', ''].join('\n'));
+  });
+});
+
+describe('the checks of the files for people', () => {
+  /** pages are the files of a small course with a tutorial page, a walkthrough, the plan, the cheat sheet and the overviews. */
+  const pages: Record<string, string> = {
+    '.course/course.yml': 'course: test\nlanguage: en\n',
+    'README.md': withHead('course', '# Test course'),
+    '10-course/README.md': withHead('overview', '# Course Material\n\n- [Tutorials](10-tutorials/README.md)\n- [Walkthroughs](20-sessions/README.md)'),
+    '10-course/10-tutorials/README.md': withHead('overview', '# Learning Path\n\n- [01 – One](01-one/README.md)'),
+    '10-course/10-tutorials/01-one/README.md': withHead(
+      'chapter',
+      `# 01 – One
+
+## Topic Overview
+
+- Values
+
+## Learning Objectives (Bloom's Taxonomy)
+
+| No. | Learning objective | Description | Level |
+| --- | --- | --- | --- |
+| 01.1 | Name values. | Names. | K1 – Remember |
+
+## Tutorials
+
+- [01.01 – Values](01.01-values.md)
+
+## Related Assignments
+
+- None yet.
+
+## Classroom Walkthrough
+
+- [Walkthrough: One](../../20-sessions/01-one-session/README.md) – 1 double lesson`,
+    ),
+    '10-course/10-tutorials/01-one/01.01-values.md': withHead(
+      'tutorial',
+      `# Values
+
+A value is a piece of data.
+
+📺 _Video: coming soon._
+
+## Numbers
+
+A number.
+
+## Common Mistakes
+
+- Quotes around a number.
+
+📖 MDN: [Data types](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Data_structures)`,
+    ),
+    '10-course/20-sessions/README.md': withHead(
+      'plan',
+      `# Classroom Walkthroughs
+
+## Course Plan
+
+| Double lesson | Input | Students work on |
+| --- | --- | --- |
+| 1 | 01 | Setup |
+
+About 1 double lesson.
+
+## Walkthroughs
+
+- [01 – One](01-one-session/README.md) – 1 double lesson`,
+    ),
+    '10-course/20-sessions/01-one-session/README.md': withHead(
+      'walkthrough',
+      `# Walkthrough: One
+
+**Chapter:** [01 – One](../../10-tutorials/01-one/README.md)\\
+**Double lessons:** 1 (double lesson 1 of the [course plan](../README.md#course-plan))\\
+**Input:** Values (≈ 20 min)
+
+## Learning Objectives
+
+- Name values
+
+## Before You Start
+
+- Open the playground.
+
+## Input – Values (≈ 20 min)
+
+1. **Numbers** (≈ 15 min) – [01.01 › Numbers](../../10-tutorials/01-one/01.01-values.md#numbers)
+   - Show: a number.
+   - Point: a number has no quotes.
+2. **Hand-off** (≈ 5 min) – see below.
+
+### Hand-off
+
+- Start the first assignment.
+
+## During the Work Time
+
+### Stumbling Blocks
+
+- Quotes.
+
+### Mini-Inputs on Demand (≤ 5 min)
+
+- Numbers again.
+
+### Differentiation
+
+- Fast students: more numbers.
+
+## Material
+
+- [Chapter](../../10-tutorials/01-one/README.md)`,
+    ),
+    'reference-material/README.md': withHead('overview', '# Reference Material\n\n- [Cheat Sheet](10-cheat-sheet.md)'),
+    'reference-material/10-cheat-sheet.md': withHead(
+      'cheat-sheet',
+      `# Cheat Sheet
+
+Short notes for the assignments.
+
+## One (01)
+
+\`\`\`typescript
+const count = 3; // a number
+\`\`\`
+
+| Value | Type |
+| --- | --- |
+| \`3\` | number |
+
+- No quotes around a number.
+
+📖 [01 – One](../10-course/10-tutorials/01-one/README.md) · MDN: [Numbers](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)
+
+---
+
+_This project is licensed under the [CC BY-SA 4.0](../LICENSE)._`,
+    ),
+  };
+
+  /**
+   * pagesCourse returns the small course with changed files; a file with an empty text is left out.
+   * @param changes - The changed files by their paths relative to the course.
+   */
+  const pagesCourse = (changes: Record<string, string> = {}) =>
+    memoryFiles(Object.fromEntries(Object.entries({ ...pages, ...changes }).filter(([, text]) => text !== '').map(([file, text]) => [`${root}/${file}`, text])));
+
+  const pageCodes = (changes: Record<string, string> = {}) => codes(pagesCourse(changes));
+
+  it('finds no problem in the files of their forms, and gives each file its kind', () => {
+    const loaded = loadCourse(root, pagesCourse());
+    expect(loaded.problems).toEqual([]);
+    expect(loaded.files.map((file) => `${file.file} ${file.kind}`)).toContain('10-course/10-tutorials/01-one/01.01-values.md tutorial');
+    expect(loaded.files.map((file) => file.kind).sort()).toEqual(['chapter', 'cheat-sheet', 'course', 'overview', 'overview', 'overview', 'plan', 'tutorial', 'walkthrough']);
+  });
+
+  it('finds the files of the patterns without the comment of the format', () => {
+    const tutorial = '10-course/10-tutorials/01-one/01.01-values.md';
+    expect(pageCodes({ [tutorial]: pages[tutorial].split('\n').slice(commentLines('tutorial').length + 1).join('\n') })).toEqual([`${tutorial}:1 missing-comment`]);
+  });
+
+  it('reports a tutorial page without its video, with a wrong name, or without the links of its chapter and its walkthrough', () => {
+    const tutorial = '10-course/10-tutorials/01-one/01.01-values.md';
+    expect(pageCodes({ [tutorial]: pages[tutorial].replace('📺 _Video: coming soon._', '') })).toEqual([`${tutorial}:8 missing-video`]);
+    expect(pageCodes({ '10-course/10-tutorials/01-one/02.01-more.md': pages[tutorial].replace('# Values', '# More') })).toEqual([
+      '10-course/10-tutorials/01-one/02.01-more.md:1 page-name',
+      '10-course/10-tutorials/01-one/README.md:20 tutorial-link',
+      '10-course/20-sessions/01-one-session/README.md:8 walkthrough-link',
+    ]);
+  });
+
+  it('reports a walkthrough without its head and its sections, a long input and an input without its hand-off', () => {
+    const walkthrough = '10-course/20-sessions/01-one-session/README.md';
+    const changed = pages[walkthrough]
+      .replace('**Double lessons:** 1 (double lesson 1 of the [course plan](../README.md#course-plan))\\\n', '')
+      .replace('## Input – Values (≈ 20 min)', '## Input – Values (≈ 35 min)')
+      .replace('### Hand-off\n', '')
+      .replace('### Differentiation\n', '')
+      .replace('## Material', '## Links');
+    expect(pageCodes({ [walkthrough]: changed })).toEqual([
+      `${walkthrough}:8 missing-section`,
+      `${walkthrough}:10 missing-head`,
+      `${walkthrough}:21 input-time`,
+      `${walkthrough}:21 missing-section`,
+      `${walkthrough}:31 missing-section`,
+    ]);
+    expect(pageCodes({ [walkthrough]: pages[walkthrough].replace('**Chapter:** [01 – One](../../10-tutorials/01-one/README.md)', '**Chapter:** [01 – One](../../10-tutorials/02-two/README.md)') })).toEqual([
+      `${walkthrough}:10 missing-chapter`,
+    ]);
+  });
+
+  it('reports a course plan without its table of three columns, and an overview without the link to a file of its folder', () => {
+    const plan = '10-course/20-sessions/README.md';
+    expect(pageCodes({ [plan]: pages[plan].replace('| Double lesson | Input | Students work on |\n| --- | --- | --- |\n| 1 | 01 | Setup |', '| Double lesson | Input |\n| --- | --- |\n| 1 | 01 |') })).toEqual([
+      `${plan}:12 plan-table`,
+    ]);
+    expect(pageCodes({ '10-course/20-sessions/02-two-session/notes.md': 'Notes', '10-course/20-sessions/03-three-session/README.md': '' })).toEqual([]);
+    expect(pageCodes({ '10-course/10-tutorials/README.md': withHead('overview', '# Learning Path') })).toEqual(['10-course/10-tutorials/README.md:8 overview-link']);
+  });
+
+  it('reports a cheat sheet without a section of a chapter, with a section of no chapter, without its last paragraph, or over its limits', () => {
+    const sheet = 'reference-material/10-cheat-sheet.md';
+    expect(pageCodes({ [sheet]: pages[sheet].replace('## One (01)', '## Uno (01)').replace('📖 [01 – One](../10-course/10-tutorials/01-one/README.md) · ', '📖 ') })).toEqual([
+      `${sheet}:12 cheat-sheet-section`,
+      `${sheet}:24 cheat-sheet-link`,
+    ]);
+    expect(pageCodes({ [sheet]: pages[sheet].replace('## One (01)', '## Two (02)').replace('\n📖 [01 – One]', '\n- Two.\n- Three.\n- Four.\n- Five.\n\nMore.\n\n📖 [01 – One]') })).toEqual([
+      `${sheet}:8 missing-section`,
+      `${sheet}:12 cheat-sheet-section`,
+      `${sheet}:27 cheat-sheet-size`,
+    ]);
+    expect(pageCodes({ [sheet]: pages[sheet].replace('\n📖 [01 – One](../10-course/10-tutorials/01-one/README.md) · MDN: [Numbers](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number)\n', '') })).toEqual([
+      `${sheet}:12 cheat-sheet-link`,
+    ]);
   });
 });

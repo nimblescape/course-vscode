@@ -11,11 +11,14 @@
  * the npm package. The module uses no API of VS Code.
  */
 
-/** Kind is the kind of a file of a course, the word after the version in the comment of the format. */
-export type Kind = 'course' | 'chapter' | 'assignment' | 'feedback';
+/**
+ * Kind is the kind of a file of a course, the word after the version in the comment of the format. Programs read the
+ * README of the course, of the chapters and of the assignments and the feedback files; the other kinds are for people.
+ */
+export type Kind = 'course' | 'chapter' | 'assignment' | 'feedback' | 'tutorial' | 'walkthrough' | 'plan' | 'cheat-sheet' | 'overview';
 
 /** kinds are the kinds of the files of a course, in the order of the documentation. */
-export const kinds: readonly Kind[] = ['course', 'chapter', 'assignment', 'feedback'];
+export const kinds: readonly Kind[] = ['course', 'chapter', 'assignment', 'feedback', 'tutorial', 'walkthrough', 'plan', 'cheat-sheet', 'overview'];
 
 /** Course is a course with its chapters and assignments. */
 export interface Course {

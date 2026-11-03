@@ -20,9 +20,10 @@ import { readChapter } from './chapter';
 import { findComment, formatVersion, versionText } from './comment';
 import { readFeedbackBlocks } from './feedback';
 import { type Language, languageOf, languages } from './languages';
-import { blocksOf } from './markdown';
+import { type Blocks, blocksOf } from './markdown';
+import { checkPages } from './pages';
 import { compareNumbers, matches } from './paths';
-import type { Assignment, Chapter, Course, Feedback, Kind, Problem } from './types';
+import { type Assignment, type Chapter, type Course, type Feedback, type Kind, kinds, type Problem } from './types';
 
 /** Files reads the files of a course: the course extension gives the text of an open editor. */
 export interface Files {
@@ -60,6 +61,11 @@ export interface Settings {
   readme: string;
   chapters: string[];
   assignments: string[];
+  tutorials: string[];
+  walkthroughs: string[];
+  plan: string[];
+  cheatSheet: string[];
+  overviews: string[];
 }
 
 /** defaultSettings are the settings of a course without .course/course.yml: the folders of the majikmate courses. */
@@ -69,7 +75,23 @@ export const defaultSettings: Settings = {
   readme: 'README.md',
   chapters: ['10-course/10-tutorials/*/README.md'],
   assignments: ['20-assignments/*/*/README.md'],
+  tutorials: ['10-course/10-tutorials/*/*.md'],
+  walkthroughs: ['10-course/20-sessions/*/README.md'],
+  plan: ['10-course/20-sessions/README.md'],
+  cheatSheet: ['reference-material/10-cheat-sheet.md'],
+  overviews: ['10-course/README.md', '10-course/10-tutorials/README.md', '20-assignments/README.md', '20-assignments/*/README.md', 'reference-material/README.md'],
 };
+
+/** patternFields are the fields of the patterns in .course/course.yml with their kinds, in the order in which they decide the kind of a file. */
+const patternFields: readonly { field: string; key: keyof Settings; kind: Kind }[] = [
+  { field: 'chapters', key: 'chapters', kind: 'chapter' },
+  { field: 'assignments', key: 'assignments', kind: 'assignment' },
+  { field: 'tutorials', key: 'tutorials', kind: 'tutorial' },
+  { field: 'walkthroughs', key: 'walkthroughs', kind: 'walkthrough' },
+  { field: 'plan', key: 'plan', kind: 'plan' },
+  { field: 'cheat-sheet', key: 'cheatSheet', kind: 'cheat-sheet' },
+  { field: 'overviews', key: 'overviews', kind: 'overview' },
+];
 
 /** feedbackName is the name of the feedback file next to the README of an assignment. */
 export const feedbackName = 'FEEDBACK.md';
@@ -125,7 +147,7 @@ export function readSettings(folder: string, files: Files = nodeFiles): { settin
   }
   const fields = (value && typeof value === 'object' ? value : {}) as Record<string, unknown>;
   const problems: Problem[] = [];
-  const known = ['course', 'language', 'readme', 'chapters', 'assignments'];
+  const known = ['course', 'language', 'readme', ...patternFields.map((each) => each.field)];
   for (const key of Object.keys(fields).filter((each) => !known.includes(each))) {
     problems.push({ file: settingsFile, line: 1, code: 'settings', message: `The settings have the unknown field "${key}".` });
   }
@@ -140,6 +162,11 @@ export function readSettings(folder: string, files: Files = nodeFiles): { settin
       readme: typeof fields.readme === 'string' ? fields.readme : defaultSettings.readme,
       chapters: patternList(fields.chapters, defaultSettings.chapters),
       assignments: patternList(fields.assignments, defaultSettings.assignments),
+      tutorials: patternList(fields.tutorials, defaultSettings.tutorials),
+      walkthroughs: patternList(fields.walkthroughs, defaultSettings.walkthroughs),
+      plan: patternList(fields.plan, defaultSettings.plan),
+      cheatSheet: patternList(fields['cheat-sheet'], defaultSettings.cheatSheet),
+      overviews: patternList(fields.overviews, defaultSettings.overviews),
     },
     problems,
   };
@@ -247,7 +274,7 @@ export function loadCourse(folder: string, files: Files = nodeFiles): Loaded {
   const courseFiles: CourseFile[] = [];
   for (const file of markdownFiles(folder, files)) {
     const fromPattern: Kind | undefined =
-      file === settings.readme ? 'course' : matches(file, settings.chapters) ? 'chapter' : matches(file, settings.assignments) ? 'assignment' : undefined;
+      file === settings.readme ? 'course' : patternFields.find((each) => matches(file, settings[each.key] as string[]))?.kind;
     const lines = textOf(file).replace(/\r\n?/g, '\n').split('\n');
     const comment = findComment(lines);
     if (comment) {
@@ -255,7 +282,7 @@ export function loadCourse(folder: string, files: Files = nodeFiles): Loaded {
         problems.push({ file, line: comment.start + 1, code: 'newer-format', message: `The comment names version ${versionText(comment.version)} of the format, newer than version ${versionText(formatVersion)} of this course module: the module reads the file, but changes nothing in it and checks nothing in it.` });
       }
       if (!comment.kind) {
-        problems.push({ file, line: comment.start + 1, code: 'comment-kind', message: `The comment of the format names the kind "${comment.kindText}", not one of course, chapter, assignment or feedback.` });
+        problems.push({ file, line: comment.start + 1, code: 'comment-kind', message: `The comment of the format names the kind "${comment.kindText}", not one of ${kinds.join(', ')}.` });
       }
       if (!comment.atStart) {
         problems.push({ file, line: comment.start + 1, code: 'comment-place', message: 'The comment of the format must stand at the start of the file.' });
@@ -266,7 +293,7 @@ export function loadCourse(folder: string, files: Files = nodeFiles): Loaded {
       continue;
     }
     if (!comment) {
-      problems.push({ file, line: 1, code: 'missing-comment', message: `The file has no comment of the format; \`course format\` writes it: <!-- nimblescape-course v${versionText(formatVersion)} ${kind} spec=…` });
+      problems.push({ file, line: 1, code: 'missing-comment', message: `The file has no comment of the format; \`cs format\` writes it: <!-- nimblescape-course v${versionText(formatVersion)} ${kind} spec=…` });
     }
     courseFiles.push({ file, kind, commented: comment !== undefined });
   }
@@ -337,6 +364,22 @@ export function loadCourse(folder: string, files: Files = nodeFiles): Loaded {
     assignments.push(assignment);
   }
   assignments.sort((a, b) => compareNumbers(a.number, b.number) || a.file.localeCompare(b.file));
+
+  const blocksCache = new Map<string, Blocks>();
+  const pageProblems = checkPages({
+    files: courseFiles,
+    blocks: (file) => {
+      if (!blocksCache.has(file)) {
+        blocksCache.set(file, blocksOf(textOf(file)));
+      }
+      return blocksCache.get(file)!;
+    },
+    language,
+    chapters,
+    list: (relative) => files.list(path.join(folder, relative)),
+    exists: (file) => files.read(path.join(folder, file)) !== undefined,
+  });
+  problems.push(...pageProblems.filter((each) => checked(each.file)));
 
   const readme = courseFiles.find((each) => each.kind === 'course')?.file;
   problems.sort((a, b) => a.file.localeCompare(b.file) || a.line - b.line);

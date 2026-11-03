@@ -9,7 +9,7 @@ Licensed under the MIT License. See LICENSE in the repository root for details.
 This guide explains the files, the development, the tests and the release of
 the course module. The [README](README.md) describes the use in short, and
 [docs/format.md](docs/format.md) is the specification of the format of the
-files of a course, the source of `course instructions`. The requirements of
+files of a course, the source of `cs instructions`. The requirements of
 the course module, each with an ID (`R-COURSE-001` to `R-COURSE-012`,
 `R-FEED-001` to `R-FEED-004`), are in
 [docs/course.md of nimblescape/markdown](https://github.com/nimblescape/markdown/blob/main/docs/course.md)
@@ -19,10 +19,10 @@ until the document moves into this repository.
 
 | Path | Content |
 | --- | --- |
-| `src/course/` | The library of the course module, without an API of VS Code: the comment of the format (`comment.ts`), the names of the sections of each language (`languages.ts`), the blocks of a Markdown file with markdown-it (`markdown.ts`), the readers of a chapter, an assignment and a feedback file, the reader and the checks of a course (`course.ts`), the comments of a course (`format.ts`) and the instructions (`instructions.ts`). |
-| `src/cli/` | The command `course` (`cli.ts`, started by `main.ts`) and the library of the npm package (`index.ts`). |
+| `src/course/` | The library of the course module, without an API of VS Code: the comment of the format (`comment.ts`), the names of the sections of each language (`languages.ts`), the blocks of a Markdown file with markdown-it (`markdown.ts`), the readers of a chapter, an assignment and a feedback file, the reader and the checks of a course (`course.ts`), the checks of the files for people (`pages.ts`), the comments of a course (`format.ts`), the instructions with the own rules of a course (`instructions.ts`) and the files of a new course (`create.ts`). |
+| `src/cli/` | The command `cs` (`cli.ts`, started by `main.ts`) and the library of the npm package (`index.ts`). |
 | `src/vscode/`, `src/extension.ts` | The course extension of VS Code: the courses of the workspace, the view "Course", the warnings and the comment on save. |
-| `docs/format.md` | The specification of the format, printed by `course instructions <topic>`. |
+| `docs/format.md` | The specification of the format, printed by `cs instructions <topic>`. |
 | `cli/` | The npm package `@nimblescape/course`: its manifest, its README and its types `index.d.ts`. |
 | `test/fixtures/course-de/` | A small German course for the tests, with a `FEEDBACK.md` that the feedback program `majikmate/course-feedback` wrote. |
 | `test/cli/`, `test/vscode/` | The tests of the built command and the tests in a real VS Code. |
@@ -35,7 +35,7 @@ tests in VS Code, and [`@vscode/vsce`](https://github.com/microsoft/vscode-vsce)
 the Microsoft tool that packages and publishes extensions. Everything runs on
 Node.js 24: the release in `.node-version` for the tools and CI, and the
 runtime of VS Code 1.125 and later (`engines.vscode`) for the extension. The
-command `course` of the npm package runs on the Node.js of the `PATH`,
+command `cs` of the npm package runs on the Node.js of the `PATH`,
 Node.js 22 or later (`engines` of `cli/package.json`).
 
 | Command | Effect |
@@ -44,9 +44,9 @@ Node.js 22 or later (`engines` of `cli/package.json`).
 | `npm run typecheck` | Checks the types with `tsc`. esbuild does not check them. |
 | `npm run lint` | Checks the sources with ESLint, with the recommended rules of ESLint and of typescript-eslint (`eslint.config.mjs`). |
 | `npm test` | Runs the unit tests with vitest. |
-| `npm run test:cli` | Builds the bundles and runs the tests of the built `course`. |
+| `npm run test:cli` | Builds the bundles and runs the tests of the built `cs`. |
 | `npm run test:vscode` | Builds the bundle and the tests in VS Code, downloads VS Code to `.vscode-test/` and runs the tests in it, with a copy of the test course as the workspace. On Linux without a display, run it as `xvfb-run -a npm run test:vscode`. `VSCODE_TEST_VERSION=insiders` or a version such as `1.125.0` selects another VS Code. |
-| `npm run build` | Bundles `dist/extension.js`, `cli/dist/course.js` and `cli/dist/index.js` with source maps. `node cli/dist/course.js check <folder>` then runs the built `course`. |
+| `npm run build` | Bundles `dist/extension.js`, `cli/dist/cs.js` and `cli/dist/index.js` with source maps. `node cli/dist/cs.js check <folder>` then runs the built `cs`. |
 | `npm run package` | Builds `nimblescape-course-<version>.vsix` with vsce, which first runs the production build (`vscode:prepublish`). vsce also validates the manifest and the README. |
 | `npm pack ./cli` | Builds the npm package `nimblescape-course-<version>.tgz` from `cli/`, after a production build (`node esbuild.mjs --production`). |
 | `npm run install-local` | Builds the package and installs it into every profile of the VS Code of this computer; `-- --profile <name>` installs into one profile. |
@@ -72,7 +72,7 @@ build gives the same files.
 organization `nimblescape` on npmjs.com, in the same form as the npm packages
 of Markdown Notes and Markdown Paper:
 
-- The command `course` (`bin`): `instructions [topic]`, `check [folder]`, `format [folder]` and `read [path]`.
+- The command `cs` (`bin`): `instructions [topic]`, `check [folder]`, `format [folder]`, `read [path]` and `create <folder>`.
 - The library: `main` and `exports` name the bundle `dist/index.js` of [src/cli/index.ts](src/cli/index.ts), which exports `readCourse`, `readAssignment`, `readFeedback`, `checkCourse` and `topicText` and runs nothing on its load; `types` names `index.d.ts`, which is written by hand and names no type of another package. The adapter of the reflection tool loads it on the command line and on a server.
 - `files` keeps the bundles of `dist/`, `index.d.ts` and `THIRD-PARTY-NOTICES.md`, which the build copies into `cli/`, because the bundles hold markdown-it and yaml. `engines.node` is `>=22`, and the package has no dependency.
 
@@ -89,7 +89,7 @@ npm install --global "$PWD/nimblescape-course-<version>.tgz"
 ```
 
 A program in another language, for example the feedback program in Python,
-runs `course read <path>` and reads the JSON that it prints.
+runs `cs read <path>` and reads the JSON that it prints.
 
 ## Tests in VS Code
 
