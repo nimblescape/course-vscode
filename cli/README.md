@@ -11,9 +11,16 @@ assignment for the feedback program.
 
 ## Install
 
-Nothing is published yet. Until the first release, build the package from a
-clone of the repository at a fixed commit and install the file that
-`npm pack` writes:
+`npx -y @nimblescape/course <command>` runs the command without an
+installation. To install the command `cs`:
+
+```sh
+npm install --global @nimblescape/course
+```
+
+`cs` needs Node.js 22 or newer and has no dependencies. A version that is not
+released yet is built from a clone of the repository at a fixed commit, and
+the file that `npm pack` writes is installed:
 
 ```sh
 git clone https://github.com/nimblescape/course-vscode.git
@@ -22,10 +29,6 @@ git checkout <commit>
 npm ci --ignore-scripts && node esbuild.mjs --production && npm pack ./cli
 npm install --global "$PWD/nimblescape-course-<version>.tgz"
 ```
-
-After the release, `npx -y @nimblescape/course <command>` runs the command
-without an installation. `cs` needs Node.js 22 or newer and has no
-dependencies.
 
 ## Usage
 

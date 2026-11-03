@@ -72,13 +72,13 @@ build gives the same files.
 organization `nimblescape` on npmjs.com, in the same form as the npm packages
 of Markdown Notes and Markdown Paper:
 
-- The command `cs` (`bin`): `instructions [topic]`, `check [folder]`, `format [folder]`, `read [path]` and `create <folder>`.
+- The command `cs` (`bin`): `instructions [topic]`, `check [folder]`, `format [folder]`, `read [path]`, `create <folder>` and `feedback <assignment> <answer>`.
 - The library: `main` and `exports` name the bundle `dist/index.js` of [src/cli/index.ts](src/cli/index.ts), which exports `readCourse`, `readAssignment`, `readFeedback`, `checkCourse` and `topicText` and runs nothing on its load; `types` names `index.d.ts`, which is written by hand and names no type of another package. The adapter of the reflection tool loads it on the command line and on a server.
 - `files` keeps the bundles of `dist/`, `index.d.ts` and `THIRD-PARTY-NOTICES.md`, which the build copies into `cli/`, because the bundles hold markdown-it and yaml. `engines.node` is `>=22`, and the package has no dependency.
 
-Nothing is published before a release: the package is not on npmjs.com yet.
-A person, a program or an AI agent builds the package from a clone of this
-repository at a fixed commit and installs the file that `npm pack` writes:
+The release publishes the package on npmjs.com (see [Release](#release)). A
+version that is not released yet is built from a clone of this repository at a
+fixed commit, and the file that `npm pack` writes is installed:
 
 ```sh
 git clone https://github.com/nimblescape/course-vscode.git

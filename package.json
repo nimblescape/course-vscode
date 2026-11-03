@@ -70,8 +70,7 @@
     "workspace"
   ],
   "activationEvents": [
-    "workspaceContains:.course/course.yml",
-    "onLanguage:markdown"
+    "workspaceContains:.course/course.yml"
   ],
   "capabilities": {
     "untrustedWorkspaces": {

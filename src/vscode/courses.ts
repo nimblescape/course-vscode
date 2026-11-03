@@ -39,10 +39,10 @@ export function readCourses(): WorkspaceCourse[] {
       continue;
     }
     const folder = workspaceFolder.uri.fsPath;
-    const loaded = loadCourse(folder, editorFiles);
-    const hasSettings = nodeFiles.read(path.join(folder, '.course', 'course.yml')) !== undefined;
-    if (hasSettings || loaded.course.chapters.length > 0 || loaded.course.assignments.length > 0) {
-      courses.push({ folder, loaded });
+    // Only the settings mark a course: a repository with README files at the default paths of the format but without
+    // .course/course.yml, for example a course from before the format, gets no warnings and no comment on save.
+    if (nodeFiles.read(path.join(folder, '.course', 'course.yml')) !== undefined) {
+      courses.push({ folder, loaded: loadCourse(folder, editorFiles) });
     }
   }
   return courses;
