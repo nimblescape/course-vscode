@@ -38,9 +38,11 @@ and follow them. Keep this comment as it is.
   `chapter`, `assignment` or `feedback`, and it decides the rules of the
   file. The command in the comment prints the rules of that kind.
 - The comment stands at the start of the file, with a blank line after it.
-  The README files of a course have no front matter, because GitHub shows a
-  front matter as a table. GitHub and the Markdown preview do not show the
-  comment.
+  The comment of another format, for example of nimblescape Markdown Notes
+  in a README with notes, may stand before or after it; both stand at the
+  start of the file, in any order. The README files of a course have no
+  front matter, because GitHub shows a front matter as a table. GitHub and
+  the Markdown preview do not show the comment.
 - The version is a semantic version. A higher major version is a form that an
   older version reads wrongly; a higher minor version adds optional parts
   that an older version reads and keeps; a higher patch version changes only

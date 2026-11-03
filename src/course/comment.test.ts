@@ -20,6 +20,13 @@ describe('the comment of the format', () => {
     expect(findComment(['```markdown', ...commentLines('assignment'), '```'])).toBeUndefined();
   });
 
+  it('accepts the comment of Markdown Notes before or after it, and keeps it on a write', () => {
+    const notes = ['<!-- nimblescape-markdownnotes v1.0.0 spec=x', 'words', '-->'];
+    expect(findComment([...commentLines('chapter'), '', ...notes, '', '# 01 – Loops'])).toMatchObject({ start: 0, atStart: true });
+    expect(findComment([...notes, '', ...commentLines('chapter'), '', '# 01 – Loops'])).toMatchObject({ start: 4, atStart: true });
+    expect(withComment([...notes, '', '# 01 – Loops'], 'chapter')).toEqual([...commentLines('chapter'), '', ...notes, '', '# 01 – Loops']);
+  });
+
   it('marks a comment after the text as not at the start, and keeps an unknown kind as its word', () => {
     expect(findComment(['# Title', '', '<!-- nimblescape-course v1.0.0 course spec=x', '-->'])?.atStart).toBe(false);
     expect(findComment(['<!-- nimblescape-course v1.0.0 lesson spec=x', '-->'])).toMatchObject({ kind: undefined, kindText: 'lesson' });
