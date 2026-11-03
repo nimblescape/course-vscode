@@ -39,7 +39,7 @@
   "scripts": {
     "build": "node esbuild.mjs",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint .",
+    "lint": "eslint",
     "test": "vitest run",
     "test:cli": "node esbuild.mjs && vitest run --config vitest.cli.config.mts",
     "test:vscode": "node esbuild.mjs && node scripts/build-vscode-tests.mjs && vscode-test --label vscode",
@@ -56,12 +56,12 @@
     "@types/vscode": "~1.125.0",
     "@vscode/test-cli": "^0.0.15",
     "@vscode/test-electron": "^3.1.0",
-    "@vscode/vsce": "^4.0.0",
+    "@vscode/vsce": "^4.1.0",
     "esbuild": "^0.28.2",
     "eslint": "^10.14.0",
     "globals": "^17.13.0",
     "markdown-it": "^14.3.3",
-    "typescript": "~6.0.3",
+    "typescript": "6.0.3",
     "typescript-eslint": "^8.72.1",
     "vitest": "^5.0.5",
     "yaml": "^2.9.1"
