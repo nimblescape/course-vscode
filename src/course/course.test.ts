@@ -203,9 +203,49 @@ describe('the checks of a course', () => {
 - Loop: It loops.`;
     expect(codes(course({ '20-assignments/01-one/01.01-counter/README.md': assignment(body) }))).toEqual([
       '20-assignments/01-one/01.01-counter/README.md:8 missing-section',
+      '20-assignments/01-one/01.01-counter/README.md:26 no-requirements',
       '20-assignments/01-one/01.01-counter/README.md:28 not-checklist',
       '20-assignments/01-one/01.01-counter/README.md:32 criterion-form',
     ]);
+  });
+
+  it('accepts an assignment without an example, a design reference, other sections and a list that describes the task', () => {
+    const body = `## Your Task
+
+Draw the memory.
+
+## Requirements
+
+### Part A
+
+What the club needs:
+
+- Each event has a title.
+- Each event has a start.
+
+- [ ] A loop. (objective 01.2)
+
+## Optional Extensions
+
+- A second loop.
+
+## Rules
+
+- No list.
+
+## Criteria
+
+- **Loop:** It loops.`;
+    const without = assignment(body).replace(/## Example Run\n\n```\n1\n```\n\n/, '');
+    expect(without).not.toContain('## Example Run');
+    const files = course({ '20-assignments/01-one/01.01-counter/README.md': without, '20-assignments/01-one/01.02-page/README.md': assignment(assignmentBody).replace('## Example Run', '## Design Reference') });
+    expect(codes(files)).toEqual([]);
+    expect(loadCourse(root, files).course.assignments.map((each) => each.requirements.map((requirement) => requirement.text))).toEqual([['A loop.'], ['A loop.']]);
+  });
+
+  it('reports a list without boxes that no paragraph with a colon introduces', () => {
+    const body = assignmentBody.replace('- [ ] A loop. (objective 01.2)', 'The page shows the list.\n\n- A title.\n\n- [ ] A loop. (objective 01.2)');
+    expect(codes(course({ '20-assignments/01-one/01.01-counter/README.md': assignment(body) }))).toEqual(['20-assignments/01-one/01.01-counter/README.md:30 not-checklist']);
   });
 
   it('reports objectives that no chapter has, a level that differs, a later chapter and an objective named twice', () => {

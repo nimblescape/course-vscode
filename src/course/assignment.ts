@@ -13,7 +13,7 @@
 
 import { objectiveNumber, readLevel } from './chapter';
 import type { Language } from './languages';
-import { type Blocks, findSection, firstParagraph, inSection, inlineLink, type Item, sectionsOf } from './markdown';
+import { type Blocks, describes, findSection, firstParagraph, inSection, inlineLink, type Item, sectionsOf } from './markdown';
 import { compareNumbers, resolveLink } from './paths';
 import type { Assignment, AssignmentObjective, Criterion, Problem, Requirement, Rule } from './types';
 
@@ -138,7 +138,8 @@ export function readAssignmentBlocks(blocks: Blocks, file: string, language: Lan
     criteria: findSection(blocks, 2, words.criteria),
   };
   for (const [role, section] of Object.entries(sections)) {
-    if (!section) {
+    // The example is optional: an assignment whose work is neither a program that prints nor a page has none.
+    if (!section && role !== 'exampleRun') {
       const names = words[role as keyof typeof sections];
       problem(heading?.line ?? 0, 'missing-section', `The section "## ${names.join('" or "## ')}" is missing.`);
     }
@@ -176,13 +177,18 @@ export function readAssignmentBlocks(blocks: Blocks, file: string, language: Lan
     const groups = blocks.headings.filter((each) => each.level === 3 && each.line > sections.requirements!.start && each.line < sections.requirements!.end);
     for (const item of inSection(sections.requirements, blocks.items)) {
       if (item.checkbox === undefined) {
-        problem(item.line, 'not-checklist', 'A requirement is an item of the checklist, "- [ ] <text>".');
+        if (!describes(blocks, item)) {
+          problem(item.line, 'not-checklist', 'A requirement is an item of the checklist, "- [ ] <text>".');
+        }
         continue;
       }
       const marked = readMarked(item, language, problem);
       checkMarks(marked, item.line);
       const group = groups.filter((each) => each.line < item.line).pop()?.text ?? '';
       requirements.push({ id: `R${requirements.length + 1}`, group, text: marked.text, objectives: marked.objectives, line: item.line + 1 });
+    }
+    if (requirements.length === 0) {
+      problem(sections.requirements.heading.line, 'no-requirements', 'The requirements have no item of the checklist, "- [ ] <text>".');
     }
   }
 

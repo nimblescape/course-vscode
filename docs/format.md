@@ -99,7 +99,7 @@ assignment; programs do not read them.
 | Assignment | Due date | `**Abgabe:**` | `**Due Date:**` |
 | Assignment | Chapter | `**Kapitel:**` | `**Chapter:**` |
 | Assignment | Learning objectives | `## Lernziele` | `## Learning Objectives` |
-| Assignment | Example run | `## Beispiellauf` or `## Erwartete Ausgabe` | `## Example Run` or `## Expected Output` |
+| Assignment | Example | `## Beispiellauf`, `## Erwartete Ausgabe` or `## Designvorlage` | `## Example Run`, `## Expected Output` or `## Design Reference` |
 | Assignment | Requirements | `## Anforderungen` | `## Requirements` |
 | Assignment | Rules | `## Regeln` | `## Rules` |
 | Assignment | Criteria | `## Kriterien` | `## Criteria` |
@@ -236,9 +236,12 @@ chapter: `08.01-fizz-buzz`.
   student builds and why.
 - *Chapter.* A paragraph starts with `**Kapitel:**` or `**Chapter:**` and a
   link to the README of the chapter of the assignment.
-- *Sections.* The sections are the learning objectives, the example run (or
-  the expected output), the requirements, the rules and the criteria, with
-  the names of section 3.
+- *Sections.* The sections are the learning objectives, the example, the
+  requirements, the rules and the criteria, with the names of section 3.
+  Other sections may stand between them, for example `## Optional Extensions`
+  or a section with the steps of the task. The example is optional: an
+  assignment whose work is neither a program that prints nor a page, for
+  example a drawing of the memory, shows its example inside its task.
 - *Learning objectives.* Each item names one objective of the table of its
   own chapter or of an earlier chapter, at most once: its number as a link to
   the table of the chapter, then its level from the table in brackets, then a
@@ -246,13 +249,17 @@ chapter: `08.01-fizz-buzz`.
   `- [08.3](…#lernziele-taxonomie-nach-bloom) (K3 – Anwenden): <text>`. The
   level is a copy of the level in the table of the chapter: when the table
   changes, every assignment that names the objective changes too.
-- *Example run.* A code block with the output of a run of a reference
-  solution: the questions, the answers and the output.
+- *Example.* The example of the result of a reference solution: for a
+  program that prints, the example run or the expected output, a code block
+  with the questions, the answers and the output; for a page, the design
+  reference, the description or the picture of the page.
 - *Requirements.* A checklist: each requirement is an item `- [ ] …`, a fact
   about the work that a check or a reader can confirm. A program numbers them
   R1 to Rn in their order. A larger assignment groups its requirements under
   headings of the third level inside the section, for example `### Teil A`
-  or `### main.ts`.
+  or `### main.ts`. A list without boxes after a paragraph that ends with a
+  colon describes the task and is no requirement; every other item of the
+  section is an item of the checklist.
 - *Marks of the objectives.* A requirement or a rule names the objectives
   that it serves at the end of its first paragraph: `(Lernziel 08.3)` or
   `(Lernziele 05.4, 06.4)`, in English `(objective 08.3)` or
@@ -300,13 +307,15 @@ from these rules, with the file and the line:
 
 - a missing comment of the format, a comment with an unknown kind, or a
   comment of a higher major version;
-- a missing section, title or chapter link;
+- a missing section, title or chapter link, except the optional example of
+  an assignment;
 - an objective of a chapter whose number, level or columns do not have the
   form of section 5, and a number that two objectives share;
 - an objective of an assignment that no table of a chapter has, a level that
   differs from the level in the table, an objective that the list names
   twice, and an item that does not have the form of section 7;
-- a requirement that is no item of the checklist, a criterion that does not
+- requirements without an item of the checklist, a requirement that is no
+  item of the checklist, a criterion that does not
   have the form `- **<name>:** <text>`, and a mark of objectives that names a
   number outside the list of the assignment, is not sorted, has the wrong
   word or stands in another place;
