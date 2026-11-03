@@ -5,8 +5,9 @@ repository in one form for people, AI agents and programs, as the VS Code
 extension
 [nimblescape Course](https://github.com/nimblescape/course-vscode) does. The
 command prints the rules of the files for AI agents, checks the files
-against their form, writes the comment of the format, and reads a course
-into JSON for programs in any language.
+against their form, writes the comment of the format, reads a course into
+JSON for programs in any language, and writes the feedback file of an
+assignment for the feedback program.
 
 ## Install
 
@@ -39,6 +40,8 @@ cs read                        # prints the course as JSON
 cs read 20-assignments/01-loops/01.01-count
 cs read 20-assignments/01-loops/01.01-count/FEEDBACK.md
 cs create my-course --language de   # writes the files of a new course
+cs feedback --form 20-assignments/01-loops/01.01-count               # prints the form of the answer
+cs feedback 20-assignments/01-loops/01.01-count answer.json --commits 3   # writes FEEDBACK.md
 ```
 
 | Command | Effect |
@@ -49,6 +52,8 @@ cs create my-course --language de   # writes the files of a new course
 | `format --check [folder]` | Writes nothing; names each file that needs the comment. |
 | `read [path]` | Prints the course, an assignment, a chapter or a feedback file as JSON. The path is the folder of the course, the folder or the README of an assignment, the README of a chapter, or a `FEEDBACK.md`. |
 | `create <folder> [--language de\|en]` | Writes the files of a new, empty course into the folder: `.course/course.yml`, `.course/instructions/all.md`, the README of the course, the overviews, the course plan and the cheat sheet, each with the comment of the format. It keeps each file that exists. The language is `en` when the option is missing. |
+| `feedback <assignment> <answer>` | For the feedback program: checks the JSON answer of an AI model on the work of a student (the file `<answer>`), computes the score, and writes `FEEDBACK.md` next to the README of the assignment with the comment of the format, or appends an update when the file has a feedback. Options: `--commits <n>` (the commits of the student in `workspace/`, default 0), `--not-running <reason>` (a reason why the work does not run, in the language of the course; the score is then at most 50 %; it may repeat), `--time <DD.MM.YYYY HH:MM>` (default: now, in the local time). |
+| `feedback --form <assignment>` | Prints the form of the answer with each requirement and criterion of the assignment, for the prompt of the AI model. The rules of judging print `cs instructions feedback`. |
 | `--help` | Shows the help. |
 | `--version` | Shows the version of the command and of the format. |
 
@@ -56,8 +61,9 @@ A folder or path is the current folder when it is missing. The folder of a
 course is the nearest folder with `.course/course.yml`, else the nearest
 folder with `.git`.
 
-The exit code is 0 for success, 1 when `check` found a problem or
-`format --check` found a file without the comment, and 2 for a wrong
+The exit code is 0 for success, 1 when `check` found a problem,
+`format --check` found a file without the comment or `feedback` rejected the
+answer, and 2 for a wrong
 command or option, a path that is no part of a course, or a folder that
 already holds a course for `create`. With `check`, the
 command fits a check of a pull request.

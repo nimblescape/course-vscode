@@ -359,6 +359,148 @@ it.
   `## Update – <time>`, a line about the changes, and the same sections one
   level lower (`###`). An update never changes earlier text.
 
+The feedback program writes the file with `cs feedback <assignment>
+<answer>`: the command checks the answer of the AI model (its form prints
+`cs feedback --form <assignment>`), computes the score, and writes the first
+feedback with the comment of the format or appends an update. It adds the
+comment of the format to an older file without it.
+
+### Judging the work
+
+These rules are for the AI model of the feedback program and for every
+person or AI agent that writes feedback on an assignment. The own rules of
+the course for feedback (`.course/instructions/feedback.md`) win over these
+rules, and the README of the assignment wins over both. Give the feedback in
+a polite and motivating manner.
+
+The README of an assignment (section 7) has these parts:
+
+- **Learning objectives** – what the student should practise.
+- **Example run**, **expected output** or **design reference** – what the
+  result looks like. Texts may differ in wording unless the README says they
+  are fixed; values, order and structure count.
+- **Requirements** – a checklist of verifiable facts, R1, R2, … in their
+  order. Only they count towards the score.
+- **Rules** – constraints that make the exercise an exercise (which construct
+  to use, what is forbidden, which files hold what).
+- **Criteria** – usually three, the last one always _Code Quality_ /
+  _Codequalität_, C1, C2, … in their order.
+
+The rules of judging:
+
+- **Judge against the README, not against your own taste.** If the README
+  says "choose your own songs", any songs are correct.
+- **Behaviour first.** A requirement is met when the work _does_ what the
+  README asks, for the example and for other sensible inputs. Use the output
+  of the checks of the feedback program; read the code where the checks say
+  nothing.
+- **Respect the rules.** If the work gives the right result but ignores a
+  construct the README demands, the requirement is `partly` met. If it uses a
+  construct the README forbids, the requirement is `missing`.
+- **Creativity is welcome.** Techniques from later chapters are fine as long
+  as the README does not forbid them and the learning objective is still met.
+- **Accept equivalent approaches** (the own rules of the course give
+  examples).
+- **Respect names required by the README.** Never suggest renaming a class,
+  method, variable, file or CSS class that the README demands.
+- **Teach only what the student knows.** Explain with what the chapters up to
+  the chapter of the assignment teach. Never make a technique from a later
+  chapter a requirement; you may mention it as an outlook in one sentence.
+- **Partial work:** judge the finished parts and name what is still missing.
+- **Commits:** when the README requires a number of commits or one commit per
+  step and it is not reached yet, the requirement is `missing`, and the
+  comment encourages the student to commit after every step – never as a
+  failure.
+- Mention extra effort and optional extensions under the suggestions; they do
+  not change any status.
+
+### Statuses and score
+
+Each requirement gets one status: `met` (✅), `partly` (⚠️) or `missing` (❌).
+The status agrees with its comment: when the comment names something that is
+missing, wrong or against a rule of the README, the status is `partly` or
+`missing`, never `met`. `cs feedback` computes the score from the statuses:
+met 1 point, partly ½, missing 0, divided by the number of requirements. It
+limits the score to 50 % when a check of the feedback program shows that the
+work does not run. Never write a score or a percentage yourself. Be strict on
+requirements and generous on creativity.
+
+### Best practices
+
+The best practices of each technology (the feedback program gives them as
+skills) are a part of the feedback whenever they are relevant, even if the
+README does not mention them, and they judge the criterion _Code Quality_.
+They never change a status. An alternative that the own rules of the course
+accept is never presented as a mistake. A topic of a best practice that the
+course has not taught yet by the chapter of the assignment is at most a short
+hint.
+
+**Correct code with a better form.** Code can be correct and still not use
+the form that fits best: an index loop where only the values matter, a loop
+where an array method fits better, a shorthand before the chapter that
+teaches it, or a form that type stripping cannot run. This never lowers the
+score and never changes a status. Every such case gets one short hint (💡) in
+the same shape:
+
+1. Name what the student used, with the code of the student.
+2. Say that it is correct and that the program works.
+3. Give the reason in one short sentence, without a long explanation, and
+   name the chapter that explains it in more detail ("in a later course" when
+   the course has none).
+4. Give the recommendation and show it with the names of the student. Only
+   for a form that type stripping cannot run is it general: "That is why … is
+   normally recommended:". In every other case, the better form depends on the
+   context: say why it fits better in this code ("That is why … fits better
+   here:").
+
+> You use an index loop (`for (let i = 0; i < songs.length; i++)`). This is
+> correct JavaScript, and your program works. But here only the values
+> matter, so the index is not needed, a case we explain in more detail in
+> chapter N. That is why `for … of` fits better here:
+
+Recommend only a form that the course has taught by the chapter of the
+assignment:
+
+- **The chapter that introduces a form** gets no hint for that form, even
+  where another form would fit better – an index loop in the chapter that
+  introduces index loops is fine.
+- **A better form that is not taught yet** is never recommended: no hint. The
+  only exception is a form that type stripping cannot run: its hint ends after
+  step 3, without a recommendation.
+- **Where both forms fit equally well**, as in the equivalent approaches of
+  the own rules of the course, give no hint.
+
+**A more advanced form than the assignment trains.** When the assignment
+trains a form and the student uses a more advanced one – `for … of` or an
+array method where the assignment trains the index loop – the feedback is
+positive and still teaches what the assignment trains: praise the advanced
+form, then show the trained form with the names of the student and say when
+it is needed.
+
+> You use `for … of` – a good choice, because here only the values matter.
+> This assignment trains the index loop, which you need when the position
+> matters, for example to number the songs:
+
+When the README demands the trained form, the rule "Respect the rules" still
+decides the status.
+
+### Language and tone
+
+- Write every text in the language of the course, simple and clear: short
+  sentences, no jargon without explanation.
+- Start with what works well, then guide towards improvements. Never use
+  harsh words; use the soft phrases of the own rules of the course.
+- Technical terms of JavaScript, HTML and CSS are the terms of MDN Web Docs
+  (developer.mozilla.org). Where the course material uses another term, use
+  the MDN term: for example template literal, type selector, selector list,
+  next-sibling combinator. Terms that only React has are the terms of
+  react.dev: component, props, state, hook, effect, key.
+- Code examples use English identifiers, English comments and real code of
+  the course, written in the conventions of the course.
+- Keep it compact: one sentence per requirement and criterion, at most three
+  suggestions, and a summary of one or two encouraging sentences without a
+  score.
+
 ## 9. A tutorial page
 
 A tutorial page explains one topic of a chapter to the students. It is a file

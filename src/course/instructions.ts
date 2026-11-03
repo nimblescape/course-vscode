@@ -75,7 +75,21 @@ const withoutHeader = (text: string): string => text.replace(/^<!--[\s\S]*?-->\s
  * @param text - The document.
  */
 function documentParts(text: string): { start: string; sections: Map<number, string>; sources: string } {
-  const parts = withoutHeader(text).replace(/\r\n?/g, '\n').split(/^(?=## )/m);
+  // A heading of the second level starts a part only outside a fenced code block: the examples of README files hold
+  // headings of their own.
+  const parts: string[] = [''];
+  let fence: string | undefined;
+  for (const line of withoutHeader(text).replace(/\r\n?/g, '\n').split('\n')) {
+    const marker = /^ {0,3}(`{3,}|~{3,})/.exec(line)?.[1];
+    if (marker && fence === undefined) {
+      fence = marker;
+    } else if (marker && fence !== undefined && marker[0] === fence[0] && marker.length >= fence.length && line.trim() === marker) {
+      fence = undefined;
+    } else if (fence === undefined && line.startsWith('## ')) {
+      parts.push('');
+    }
+    parts[parts.length - 1] += `${line}\n`;
+  }
   const sections = new Map<number, string>();
   let sources = '';
   for (const part of parts.slice(1)) {

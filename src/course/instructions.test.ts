@@ -23,6 +23,14 @@ describe('the instructions', () => {
     }
   });
 
+  it('keeps the examples of a section whole, with the headings inside their code blocks', () => {
+    const assignment = topicText('assignment')!;
+    const example = assignment.slice(assignment.indexOf('## 7. '), assignment.indexOf('## 14. '));
+    expect(example).toContain('## Anforderungen');
+    expect(example).toContain('## Kriterien');
+    expect(topicText('feedback')).toContain('### Judging the work');
+  });
+
   it('prints the sources with the topics that cite them', () => {
     expect(topicText('objectives')).toContain('## Sources');
     expect(topicText('objectives')).toContain('https://doi.org/10.1207/s15430421tip4104_2');

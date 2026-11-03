@@ -102,6 +102,7 @@ cs check                     # reports each place where a file differs from its 
 cs format                    # writes the comment of the format into each file
 cs read 20-assignments/01-loops/01.01-count   # prints the assignment as JSON
 cs create my-course --language de             # writes the files of a new course
+cs feedback 20-assignments/01-loops/01.01-count answer.json   # writes FEEDBACK.md from the answer of an AI model
 ```
 
 The [README of the package](https://github.com/nimblescape/course-vscode/blob/main/cli/README.md)
@@ -118,10 +119,10 @@ describes each command and the library.
 
 - The extension reads the files of the course from the disk of this
   computer, so it does not work in a virtual workspace.
-- The feedback program writes the feedback files. The extension shows a
-  feedback file without the comment of the format as a warning, but does not
-  add the comment, because a person or the extension does not change a
-  feedback file.
+- The feedback program writes the feedback files with `cs feedback`. The
+  extension shows a feedback file without the comment of the format as a
+  warning, but does not add the comment, because a person or the extension
+  does not change a feedback file.
 - The adapter that gives the reflection tool of nimblescape the objectives,
   requirements and feedback of a course comes with the reflection extension,
   which does not exist yet.

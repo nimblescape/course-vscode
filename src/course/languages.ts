@@ -85,6 +85,10 @@ export interface Language {
     run: string;
     commits: string;
     score: string;
+    /** noSuggestions is the line of the suggestions when the answer has none. */
+    noSuggestions: string;
+    /** capped is the line before the score when the work does not run; `{reasons}` stands for the reasons. */
+    capped: string;
   };
 }
 
@@ -140,6 +144,8 @@ const german: Language = {
     run: 'Ausgeführt',
     commits: 'Commits in `workspace/`',
     score: 'Ergebnis',
+    noSuggestions: 'Keine weiteren Vorschläge – weiter so!',
+    capped: 'Die Arbeit läuft noch nicht ({reasons}), daher höchstens 50 %.',
   },
 };
 
@@ -195,6 +201,8 @@ const english: Language = {
     run: 'Run',
     commits: 'Commits in `workspace/`',
     score: 'Score',
+    noSuggestions: 'No further suggestions – keep it up!',
+    capped: 'The work does not run yet ({reasons}), so the score is at most 50 %.',
   },
 };
 

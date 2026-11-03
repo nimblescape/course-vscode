@@ -16,9 +16,13 @@
  *   ([R-COURSE-009](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-009)), for a program in
  *   any language, for example the feedback program.
  * - `create <folder>` writes the files of a new, empty course, each with the comment of the format of its kind.
+ * - `feedback <assignment> <answer>` checks the JSON answer of an AI model on the work of a student, and writes or
+ *   extends the feedback file of the assignment with the score, for the feedback program
+ *   ([R-FEED-001](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-feed-001)); `feedback --form`
+ *   prints the form of that answer for the prompt.
  *
- * The exit code is 0 for success, 1 when `check` found a problem or `format --check` found a file that the format
- * changes, and 2 for a wrong command or option, a path that is no part of a course, or a folder that already holds a
+ * The exit code is 0 for success, 1 when `check` found a problem, `format --check` found a file that the format
+ * changes or `feedback` rejected the answer, and 2 for a wrong command or option, a path that is no part of a course, or a folder that already holds a
  * course. The module uses no API of VS Code, and main.ts runs it in Node.js.
  */
 
@@ -28,7 +32,9 @@ import { formatVersion, versionText } from '../course/comment';
 import { type Files, feedbackName, findCourseFolder, loadCourse, readFeedback, settingsFile } from '../course/course';
 import { newCourse } from '../course/create';
 import { commentChanges } from '../course/format';
+import { AnswerError, answerForm, feedbackFile, feedbackPart, parseAnswer } from '../course/feedbackWriter';
 import { readCourseRules, topicList, topicText } from '../course/instructions';
+import { languageOf } from '../course/languages';
 
 /** command is the name of the command, the `bin` of cli/package.json, as the shell calls it. */
 export const command = 'cs';
@@ -50,6 +56,16 @@ export const usage = [
   '                         or a FEEDBACK.md',
   '  create <folder>        write the files of a new, empty course, each with the comment of the format',
   '      --language <code>  the language of the course, de or en (default: en)',
+  '  feedback <assignment> <answer>',
+  '                         check the JSON answer of an AI model on the work of a student (the file <answer>) and',
+  '                         write or extend the FEEDBACK.md of the assignment, with the score',
+  '      --commits <n>      the number of the commits of the student in workspace/ (default: 0)',
+  '      --not-running <reason>',
+  '                         a reason why the work does not run, in the language of the course; the score is then',
+  '                         at most 50 %; the option may repeat',
+  '      --time <time>      the time of the feedback, DD.MM.YYYY HH:MM (default: now, in the local time)',
+  '  feedback --form <assignment>',
+  '                         print the form of the answer, for the prompt of the AI model',
   '',
   'A folder or path is the current folder when it is missing. The folder of a course is the nearest folder with',
   '.course/course.yml, else the nearest folder with .git.',
@@ -90,15 +106,24 @@ export function run(args: readonly string[], io: Io): number {
     return 0;
   }
   const [name, ...rest] = args;
-  const allowed: Record<string, string[]> = { instructions: [], check: [], format: ['--check'], read: [], create: ['--language'] };
+  const allowed: Record<string, string[]> = {
+    instructions: [],
+    check: [],
+    format: ['--check'],
+    read: [],
+    create: ['--language'],
+    feedback: ['--form', '--commits', '--not-running', '--time'],
+  };
   /** valued are the options that take a value, as `--language de` or `--language=de`. */
-  const valued = new Set(['--language']);
+  const valued = new Set(['--language', '--commits', '--not-running', '--time']);
   if (!(name in allowed)) {
     io.err(`Unknown command "${name}".\n\n${usage}`);
     return 2;
   }
   const options: string[] = [];
   const values = new Map<string, string>();
+  /** repeated are all values of each valued option, for an option that may repeat. */
+  const repeated = new Map<string, string[]>();
   const operands: string[] = [];
   for (let index = 0; index < rest.length; index++) {
     const arg = rest[index];
@@ -115,11 +140,13 @@ export function run(args: readonly string[], io: Io): number {
         return 2;
       }
       values.set(option, value);
+      repeated.set(option, [...(repeated.get(option) ?? []), value]);
     }
   }
   const wrong = options.filter((option) => !allowed[name].includes(option));
-  if (wrong.length > 0 || operands.length > 1) {
-    io.err(wrong.length > 0 ? `Unknown option ${wrong.join(', ')} of "${name}".` : `"${name}" takes one operand.`);
+  const most = name === 'feedback' && !options.includes('--form') ? 2 : 1;
+  if (wrong.length > 0 || operands.length > most) {
+    io.err(wrong.length > 0 ? `Unknown option ${wrong.join(', ')} of "${name}".` : `"${name}" takes ${most === 1 ? 'one operand' : 'two operands'}.`);
     return 2;
   }
   const target = path.resolve(io.cwd, operands[0] ?? '.');
@@ -170,6 +197,10 @@ export function run(args: readonly string[], io: Io): number {
   const folder = findCourseFolder(target, io.files);
   const display = (file: string): string => path.relative(io.cwd, path.join(folder, file)).split(path.sep).join('/') || '.';
 
+  if (name === 'feedback') {
+    return feedback(options, operands, values, repeated.get('--not-running') ?? [], folder, io);
+  }
+
   if (name === 'check') {
     const { problems, files } = loadCourse(folder, io.files);
     for (const problem of problems) {
@@ -216,4 +247,78 @@ export function run(args: readonly string[], io: Io): number {
   }
   io.err(`${operands[0]} is neither the folder of the course nor an assignment, a chapter or a feedback file of the course in ${display('')}.`);
   return 2;
+}
+
+/**
+ * now returns the time of now in the local time, `DD.MM.YYYY HH:MM`.
+ */
+function now(): string {
+  const date = new Date();
+  const two = (value: number): string => String(value).padStart(2, '0');
+  return `${two(date.getDate())}.${two(date.getMonth() + 1)}.${date.getFullYear()} ${two(date.getHours())}:${two(date.getMinutes())}`;
+}
+
+/**
+ * feedback runs `cs feedback`: with `--form` it prints the form of the answer; else it checks the answer of an AI model
+ * and writes or extends the feedback file of the assignment. The feedback is an update when the feedback file has an
+ * entry. It returns the exit code.
+ * @param options - The options of the command line.
+ * @param operands - The assignment, and without `--form` the file of the answer.
+ * @param values - The value of each valued option.
+ * @param notRunning - The reasons why the work does not run.
+ * @param folder - The folder of the course.
+ * @param io - The files and the streams.
+ */
+function feedback(options: readonly string[], operands: readonly string[], values: ReadonlyMap<string, string>, notRunning: readonly string[], folder: string, io: Io): number {
+  const form = options.includes('--form');
+  if (operands.length !== (form ? 1 : 2)) {
+    io.err(form ? '"feedback --form" needs the folder of an assignment.' : '"feedback" needs the folder of an assignment and the file of the answer.');
+    return 2;
+  }
+  const { course } = loadCourse(folder, io.files);
+  const relative = path.relative(folder, path.resolve(io.cwd, operands[0])).split(path.sep).join('/');
+  const assignment = course.assignments.find((each) => each.folder === relative || each.file === relative);
+  if (!assignment) {
+    io.err(`${operands[0]} is no assignment of the course in ${path.relative(io.cwd, folder) || '.'}.`);
+    return 2;
+  }
+  if (assignment.requirements.length === 0) {
+    io.err(`${assignment.file} has no requirements: the feedback judges the items of the checklist of the requirements.`);
+    return 2;
+  }
+  const update = (assignment.feedback?.entries.length ?? 0) > 0;
+  if (form) {
+    io.out(answerForm(assignment, update));
+    return 0;
+  }
+  const commits = values.get('--commits') ?? '0';
+  const time = values.get('--time') ?? now();
+  if (!/^\d+$/.test(commits) || !/^\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}$/.test(time)) {
+    io.err(!/^\d+$/.test(commits) ? `The number of commits "${commits}" is no whole number.` : `The time "${time}" does not have the form DD.MM.YYYY HH:MM.`);
+    return 2;
+  }
+  const answerText = io.files.read(path.resolve(io.cwd, operands[1]));
+  if (answerText === undefined) {
+    io.err(`${operands[1]} does not exist.`);
+    return 2;
+  }
+  const language = languageOf(course.language);
+  if (!language) {
+    io.err(`The language "${course.language}" of the course is not known.`);
+    return 2;
+  }
+  try {
+    const answer = parseAnswer(answerText, assignment, update);
+    const part = feedbackPart({ answer, assignment, language, time, commits: Number(commits), notRunning, update });
+    const file = path.join(folder, assignment.folder, feedbackName);
+    io.writeFile(file, feedbackFile(io.files.read(file), part.text));
+    io.out(`${path.relative(io.cwd, file).split(path.sep).join('/')}: ${update ? 'update' : 'feedback'} written, score ${part.score} %${notRunning.length > 0 ? ' (at most 50 %: the work does not run)' : ''}`);
+    return 0;
+  } catch (error) {
+    if (error instanceof AnswerError) {
+      io.err(`Answer rejected: ${error.message}`);
+      return 1;
+    }
+    throw error;
+  }
 }
