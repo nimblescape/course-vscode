@@ -179,10 +179,10 @@ overview, learning objectives, tutorials, related assignments and
 walkthrough. The section of the learning objectives is a table with the
 columns number, learning objective, description and level:
 
-- *(proposal)* The number is the full number of the objective,
+- The number is the full number of the objective,
   `<chapter>.<n>`, for example `08.3`. It is the ID of the objective in the
   whole course.
-- *(proposal)* The level is `K<n> – <name>`, with the six levels of the
+- The level is `K<n> – <name>`, with the six levels of the
   revised taxonomy (Krathwohl, 2002): K1 Remember, K2 Understand, K3 Apply,
   K4 Analyze (Analyse in a course in British English), K5 Evaluate, K6
   Create; in German Erinnern, Verstehen, Anwenden, Analysieren, Bewerten,
@@ -197,7 +197,7 @@ title in bold, the scenario and a link to its chapter, and it has the
 sections learning objectives, example run (or expected output), requirements,
 rules and criteria:
 
-- *(proposal)* Each item of the learning objectives names one objective of
+- Each item of the learning objectives names one objective of
   its own chapter or of an earlier chapter, at most once, with a link to the
   table of the chapter, the level from the table, and the concrete form of
   the objective in this assignment:
@@ -206,7 +206,7 @@ rules and criteria:
   Rn in their order. A larger assignment groups its requirements under
   headings of the third level inside the section of the requirements, for
   example "Teil A" and "Teil B".
-- *(proposal)* A requirement or a rule names the objectives that it serves
+- A requirement or a rule names the objectives that it serves
   at the end of its first paragraph: `(Lernziel 08.3)` or
   `(Lernziele 05.4, 06.4)`, in English `(objective 08.3)` or
   `(objectives 05.4, 06.4)`, sorted, and only with numbers of the learning
@@ -229,7 +229,7 @@ files of its workspace; and the feedback of each assignment
 ([R-FEED-002](#r-feed-002)). The feedback program, the adapter of the
 reflection tool and the course extension read the files of a course only
 through this reader, so that no program reads a README by rules of its own.
-*(proposal)* The functions are `readCourse(folder)`,
+The functions are `readCourse(folder)`,
 `readAssignment(folder)`, `readFeedback(file)`, `checkCourse(folder)` and
 `topicText(topic)`; the package has no dependencies, and its types are
 written by hand. `cs read [path]` prints a course, a chapter, an
@@ -244,7 +244,7 @@ item of the checklist, an objective of an assignment that no chapter table
 has, a level outside K1 to K6, or a missing comment of the format. The
 course extension shows the same checks as warnings in the text editor, after
 a pause in typing, only in a course ([R-COURSE-006](#r-course-006)).
-*(proposal)* `cs check` prints one line for each
+`cs check` prints one line for each
 problem, `file:line: message [code]`, and ends with the exit code 1 when it
 finds a problem. `cs format [--check] [folder]` writes the comment of
 the format into each README that has none or an older version of it, never
@@ -273,16 +273,16 @@ package that the reflection tool loads.
 workspace that contains `.course/course.yml` (the activation event
 `workspaceContains:.course/course.yml`), not when a Markdown file opens. In
 a folder without this file it shows no view, no warnings and writes no
-comment on save ([R-COURSE-006](#r-course-006)). *(proposal)* It shows
-the structure of a course in the view "Course" of the explorer: its
-chapters, learning objectives, assignments and requirements, each with a
-link to its place in the README. For an assignment, it opens the feedback
-and the analysis. It shows the checks as warnings after a pause in typing
-(setting `checkDelay`). It writes the comment of the format with the save of
+comment on save ([R-COURSE-006](#r-course-006)). It shows the structure
+of a course in the view "Course" of the explorer: its chapters, learning
+objectives, assignments and requirements, each with a link to its place in
+the README. For an assignment, it opens the feedback. It shows the checks
+as warnings after a pause in typing (setting `checkDelay`). It writes the comment of the format with the save of
 a README of a course, in the same way as Markdown Notes writes its comment
 (setting `addFormatComment`), but not with an automatic save after a delay;
 the command "Add Format Comments" writes it into all README files of the
-course.
+course. *(proposal)* For an assignment, the view also opens the analysis of
+the reflection tool.
 
 The image of the Dev Spaces of the courses does not install the course
 extension until the history and the reflection tool need it.
