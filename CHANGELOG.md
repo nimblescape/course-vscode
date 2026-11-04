@@ -9,6 +9,23 @@ Licensed under the MIT License. See LICENSE in the repository root for details.
 Each section lists the changes of one released version. The release workflow
 takes the section of a version as the notes of its GitHub release.
 
+## 0.2.0
+
+- The headings of a feedback file name the commit whose work the feedback
+  judges, after the time: `## Update – 04.11.2026 11:28 · bf21589`. It is the
+  newest commit that changed `workspace/` when the feedback program read the
+  work, so the student and the teacher see which state of the work a
+  feedback judges. A heading without a commit stays valid. The format of the
+  files of a course is now v1.1.0: the extension and
+  `npx -y @nimblescape/course format` write the new comment of the format
+  into a file that they write.
+- `npx -y @nimblescape/course feedback` takes the commit with
+  `--commit <hash>`, and `npx -y @nimblescape/course read` gives it as the
+  `commit` of each entry of a feedback file.
+- A feedback writes each status mark once, also when the answer of the AI
+  model starts a text with the mark.
+- The extension has its icon on the Marketplace.
+
 ## 0.1.0
 
 The first version.
