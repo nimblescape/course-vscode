@@ -280,6 +280,9 @@ a README of a course, in the same way as Markdown Notes writes its comment
 the command "Add Format Comments" writes it into all README files of the
 course.
 
+The image of the Dev Spaces of the courses does not install the course
+extension until the history and the reflection tool need it.
+
 ## 6. Feedback
 
 ### R-FEED-001
