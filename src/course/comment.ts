@@ -25,7 +25,7 @@ export interface Version {
 export const formatName = 'nimblescape-course';
 
 /** formatVersion is the version of the format that the module reads and writes. */
-export const formatVersion: Version = { major: 1, minor: 0, patch: 0 };
+export const formatVersion: Version = { major: 1, minor: 1, patch: 0 };
 
 /** specUrl is the address of the specification of the format, docs/format.md of the repository on the branch main. */
 export const specUrl = 'https://github.com/nimblescape/course-vscode/blob/main/docs/format.md';

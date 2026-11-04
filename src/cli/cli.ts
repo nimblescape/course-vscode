@@ -65,6 +65,8 @@ export const usage = [
   '  feedback <assignment> <answer>',
   '                         check the JSON answer of an AI model on the work of a student (the file <answer>) and',
   '                         write or extend the FEEDBACK.md of the assignment, with the score',
+  '      --commit <hash>    the short hash of the commit whose work the feedback judges, written after the time of',
+  '                         the heading: the newest commit that changed workspace/ (default: none)',
   '      --commits <n>      the number of the commits of the student in workspace/ (default: 0)',
   '      --not-running <reason>',
   '                         a reason why the work does not run, in the language of the course; the score is then',
@@ -118,10 +120,10 @@ export function run(args: readonly string[], io: Io): number {
     format: ['--check'],
     read: [],
     create: ['--language'],
-    feedback: ['--form', '--commits', '--not-running', '--time'],
+    feedback: ['--form', '--commit', '--commits', '--not-running', '--time'],
   };
   /** valued are the options that take a value, as `--language de` or `--language=de`. */
-  const valued = new Set(['--language', '--commits', '--not-running', '--time']);
+  const valued = new Set(['--language', '--commit', '--commits', '--not-running', '--time']);
   if (!(name in allowed)) {
     io.err(`Unknown command "${name}".\n\n${usage}`);
     return 2;
@@ -299,8 +301,13 @@ function feedback(options: readonly string[], operands: readonly string[], value
   }
   const commits = values.get('--commits') ?? '0';
   const time = values.get('--time') ?? now();
+  const commit = values.get('--commit');
   if (!/^\d+$/.test(commits) || !/^\d{2}\.\d{2}\.\d{4} \d{2}:\d{2}$/.test(time)) {
     io.err(!/^\d+$/.test(commits) ? `The number of commits "${commits}" is no whole number.` : `The time "${time}" does not have the form DD.MM.YYYY HH:MM.`);
+    return 2;
+  }
+  if (commit !== undefined && !/^[0-9a-f]{7,40}$/.test(commit)) {
+    io.err(`The commit "${commit}" is no hash of a commit: 7 to 40 digits 0-9 and letters a-f.`);
     return 2;
   }
   const answerText = io.files.read(path.resolve(io.cwd, operands[1]));
@@ -315,7 +322,7 @@ function feedback(options: readonly string[], operands: readonly string[], value
   }
   try {
     const answer = parseAnswer(answerText, assignment, update);
-    const part = feedbackPart({ answer, assignment, language, time, commits: Number(commits), notRunning, update });
+    const part = feedbackPart({ answer, assignment, language, time, commit, commits: Number(commits), notRunning, update });
     const file = path.join(folder, assignment.folder, feedbackName);
     io.writeFile(file, feedbackFile(io.files.read(file), part.text));
     io.out(`${path.relative(io.cwd, file).split(path.sep).join('/')}: ${update ? 'update' : 'feedback'} written, score ${part.score} %${notRunning.length > 0 ? ' (at most 50 %: the work does not run)' : ''}`);

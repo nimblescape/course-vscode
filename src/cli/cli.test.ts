@@ -36,7 +36,7 @@ describe('the command cs', () => {
   it('shows the version of the command and of the format', () => {
     const each = io(nodeFiles, fixture);
     expect(run(['--version'], each.io)).toBe(0);
-    expect(each.out[0]).toMatch(/^@nimblescape\/course \d+\.\d+\.\d+, format nimblescape-course v1\.0\.0$/);
+    expect(each.out[0]).toMatch(/^@nimblescape\/course \d+\.\d+\.\d+, format nimblescape-course v1\.1\.0$/);
   });
 
   it('rejects an unknown command, an unknown option and a second operand', () => {
@@ -135,16 +135,17 @@ describe('the command cs', () => {
       const file = path.join(folder, 'answer.json');
       fs.writeFileSync(file, JSON.stringify(answer));
       const written = io(nodeFiles, fixture);
-      expect(run(['feedback', shopping, file, '--commits', '2', '--time', '03.11.2026 18:00', '--not-running', 'die Typprüfung meldet Fehler'], written.io)).toBe(0);
+      expect(run(['feedback', shopping, file, '--commit', 'bf21589', '--commits', '2', '--time', '03.11.2026 18:00', '--not-running', 'die Typprüfung meldet Fehler'], written.io)).toBe(0);
       expect(written.out).toEqual([`${shopping}/FEEDBACK.md: feedback written, score 50 % (at most 50 %: the work does not run)`]);
       const text = written.written[path.join(fixture, shopping, 'FEEDBACK.md')];
-      expect(text).toContain('# Feedback: Shopping List – 03.11.2026 18:00');
+      expect(text).toContain('# Feedback: Shopping List – 03.11.2026 18:00 · bf21589\n');
       expect(text).toContain('**Ergebnis: 50 %** – Weiter so!');
 
       const updated = io(nodeFiles, fixture);
       fs.writeFileSync(file, JSON.stringify({ ...answer, changes: 'Mehr Commits.' }));
       expect(run(['feedback', '20-assignments/01-loops/01.01-count', file, '--time', '03.11.2026 19:00'], updated.io)).toBe(0);
       expect(updated.out[0]).toBe('20-assignments/01-loops/01.01-count/FEEDBACK.md: update written, score 83 %');
+      expect(updated.written[path.join(fixture, '20-assignments/01-loops/01.01-count', 'FEEDBACK.md')]).toContain('\n## Update – 03.11.2026 19:00\n');
 
       const rejected = io(nodeFiles, fixture);
       fs.writeFileSync(file, JSON.stringify({ ...answer, summary: '90 %' }));
@@ -153,6 +154,10 @@ describe('the command cs', () => {
       expect(rejected.written).toEqual({});
       expect(run(['feedback', shopping], io(nodeFiles, fixture).io)).toBe(2);
       expect(run(['feedback', shopping, file, '--time', 'today'], io(nodeFiles, fixture).io)).toBe(2);
+      const short = io(nodeFiles, fixture);
+      expect(run(['feedback', shopping, file, '--commit', 'bf215'], short.io)).toBe(2);
+      expect(short.err[0]).toBe('The commit "bf215" is no hash of a commit: 7 to 40 digits 0-9 and letters a-f.');
+      expect(run(['feedback', shopping, file, '--commit', 'BF21589'], io(nodeFiles, fixture).io)).toBe(2);
       expect(run(['feedback', '10-course', file], io(nodeFiles, fixture).io)).toBe(2);
     } finally {
       fs.rmSync(folder, { recursive: true, force: true });
@@ -162,7 +167,7 @@ describe('the command cs', () => {
   it('checks a course from a folder inside it, with the paths relative to the current folder', () => {
     const each = io(nodeFiles, path.join(fixture, '20-assignments'));
     expect(run(['check'], each.io)).toBe(1);
-    expect(each.out).toEqual(['01-loops/01.01-count/FEEDBACK.md:1: The file has no comment of the format; the feedback program writes it: <!-- nimblescape-course v1.0.0 feedback spec=… [missing-comment]']);
+    expect(each.out).toEqual(['01-loops/01.01-count/FEEDBACK.md:1: The file has no comment of the format; the feedback program writes it: <!-- nimblescape-course v1.1.0 feedback spec=… [missing-comment]']);
     expect(each.err).toEqual(['6 files, 1 problem.']);
   });
 

@@ -257,6 +257,11 @@ export interface FeedbackInput {
   language: Language;
   /** time is the time of the feedback, `DD.MM.YYYY HH:MM`. */
   time: string;
+  /**
+   * commit is the short hash of the commit whose work the feedback judges, written after the time of the heading, or
+   * undefined for a heading without it.
+   */
+  commit: string | undefined;
   /** commits is the number of the commits of the student in `workspace/`. */
   commits: number;
   /** notRunning are the reasons why the work does not run, in the language of the course; empty when it runs. */
@@ -272,11 +277,12 @@ export function feedbackPart(input: FeedbackInput): { text: string; score: numbe
   const { answer, assignment, update } = input;
   const words = input.language.feedback;
   const h2 = update ? '###' : '##';
+  const stamp = input.commit === undefined ? input.time : `${input.time} · ${input.commit}`;
   const out: string[] = [];
   if (update) {
-    out.push('---', '', `## ${words.update} – ${input.time}`, '', oneLine(answer.changes ?? ''), '');
+    out.push('---', '', `## ${words.update} – ${stamp}`, '', oneLine(answer.changes ?? ''), '');
   } else {
-    out.push(`# ${words.title}: ${assignment.title} – ${input.time}`, '');
+    out.push(`# ${words.title}: ${assignment.title} – ${stamp}`, '');
   }
   out.push(`${h2} ${words.assessment}`, '');
   answer.requirements.forEach((item, index) => {

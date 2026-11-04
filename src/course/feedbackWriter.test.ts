@@ -86,9 +86,9 @@ describe('the writer of the feedback file', () => {
 
   it('writes the first feedback with the comment of the format and an update after it, and the reader reads both', () => {
     const language = languages.de;
-    const first = feedbackPart({ answer: parseAnswer(JSON.stringify(answer()), assignment, false), assignment, language, time: '03.11.2026 18:00', commits: 3, notRunning: [], update: false });
+    const first = feedbackPart({ answer: parseAnswer(JSON.stringify(answer()), assignment, false), assignment, language, time: '03.11.2026 18:00', commit: 'bf21589', commits: 3, notRunning: [], update: false });
     expect(first.score).toBe(50);
-    expect(first.text).toContain('# Feedback: Shopping List – 03.11.2026 18:00');
+    expect(first.text).toContain('# Feedback: Shopping List – 03.11.2026 18:00 · bf21589\n');
     expect(first.text).toContain('- ❌ **2. ');
     expect(first.text).toContain('```typescript\nfor (const price of prices) {');
     const update = feedbackPart({
@@ -96,20 +96,22 @@ describe('the writer of the feedback file', () => {
       assignment,
       language,
       time: '03.11.2026 19:00',
+      commit: undefined,
       commits: 4,
       notRunning: ['die Typprüfung meldet Fehler'],
       update: true,
     });
+    expect(update.text).toContain('## Update – 03.11.2026 19:00\n');
     expect(update.text).toContain('Keine weiteren Vorschläge – weiter so!');
     expect(update.text).toContain('⚠️ Die Arbeit läuft noch nicht (die Typprüfung meldet Fehler), daher höchstens 50 %.');
     const file = feedbackFile(feedbackFile(undefined, first.text), update.text);
-    expect(file.startsWith('<!-- nimblescape-course v1.0.0 feedback spec=')).toBe(true);
+    expect(file.startsWith('<!-- nimblescape-course v1.1.0 feedback spec=')).toBe(true);
     const { feedback, title, problems } = readFeedbackBlocks(blocksOf(file), 'FEEDBACK.md', language);
     expect(problems).toEqual([]);
     expect(title).toBe('Shopping List');
-    expect(feedback.entries.map((entry) => [entry.update, entry.score, entry.capped, entry.commits, entry.criteria.length])).toEqual([
-      [false, 50, false, 3, 3],
-      [true, 50, true, 4, 3],
+    expect(feedback.entries.map((entry) => [entry.time, entry.commit, entry.update, entry.score, entry.capped, entry.commits, entry.criteria.length])).toEqual([
+      ['03.11.2026 18:00', 'bf21589', false, 50, false, 3, 3],
+      ['03.11.2026 19:00', undefined, true, 50, true, 4, 3],
     ]);
   });
 
@@ -137,6 +139,7 @@ describe('the writer of the feedback file', () => {
       assignment,
       language: languages.de,
       time: '04.11.2026 10:00',
+      commit: undefined,
       commits: 1,
       notRunning: [],
       update: false,
@@ -150,7 +153,7 @@ describe('the writer of the feedback file', () => {
 
   it('adds the comment of the format to an older feedback file without it when it appends an update', () => {
     const file = feedbackFile('# Feedback: X – 01.11.2026 10:00\n\n## Bewertung\n', '---\n\n## Update – 02.11.2026 10:00\n');
-    expect(file.split('\n')[0]).toBe('<!-- nimblescape-course v1.0.0 feedback spec=https://github.com/nimblescape/course-vscode/blob/main/docs/format.md');
+    expect(file.split('\n')[0]).toBe('<!-- nimblescape-course v1.1.0 feedback spec=https://github.com/nimblescape/course-vscode/blob/main/docs/format.md');
     expect(file).toContain('## Bewertung\n\n---\n\n## Update – 02.11.2026 10:00\n');
   });
 });
