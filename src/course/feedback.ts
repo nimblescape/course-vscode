@@ -4,8 +4,8 @@
 
 /**
  * The reader of the feedback file of an assignment
- * ([R-FEED-001](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-feed-001),
- * [R-FEED-002](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-feed-002)): for the first feedback
+ * ([R-FEED-001](../../docs/requirements.md#r-feed-001),
+ * [R-FEED-002](../../docs/requirements.md#r-feed-002)): for the first feedback
  * and for each update, the time, the commit of the work, the status of each requirement, the comment on each criterion, the program run, the
  * number of commits, the score, and whether a check capped the score. It also gives the places where the file differs
  * from its form. The module uses no API of VS Code.

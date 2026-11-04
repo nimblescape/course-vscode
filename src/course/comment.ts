@@ -4,7 +4,7 @@
 
 /**
  * The comment that names the format of a file of a course, like a DOCTYPE
- * ([R-COURSE-004](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-004)). Its first line names
+ * ([R-COURSE-004](../../docs/requirements.md#r-course-004)). Its first line names
  * the format, its version, the kind of the file and the address of the specification; the further lines tell an AI
  * agent to print the rules of the kind with `npx -y @nimblescape/course instructions <kind>`. The comment stands at the
  * start of the file. It is in the same form as the comment of the format of nimblescape Markdown Notes: the version is

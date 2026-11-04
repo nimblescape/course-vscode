@@ -7,18 +7,18 @@
  * @nimblescape/course of cli/:
  *
  * - `instructions [topic]` prints the rules of a topic for AI agents, then the own rules of the course from
- *   .course/instructions/ ([R-COURSE-005](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-005)).
+ *   .course/instructions/ ([R-COURSE-005](../../docs/requirements.md#r-course-005)).
  * - `check [folder]` reports each place where a file of a course differs from its form
- *   ([R-COURSE-010](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-010)).
+ *   ([R-COURSE-010](../../docs/requirements.md#r-course-010)).
  * - `format [folder]` writes the comment of the format into each file of a course that has none or has one of an
- *   older version ([R-COURSE-004](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-004)).
+ *   older version ([R-COURSE-004](../../docs/requirements.md#r-course-004)).
  * - `read [path]` prints a course, an assignment, a chapter or a feedback file as JSON
- *   ([R-COURSE-009](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-009)), for a program in
+ *   ([R-COURSE-009](../../docs/requirements.md#r-course-009)), for a program in
  *   any language, for example the feedback program.
  * - `create <folder>` writes the files of a new, empty course, each with the comment of the format of its kind.
  * - `feedback <assignment> <answer>` checks the JSON answer of an AI model on the work of a student, and writes or
  *   extends the feedback file of the assignment with the score, for the feedback program
- *   ([R-FEED-001](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-feed-001)); `feedback --form`
+ *   ([R-FEED-001](../../docs/requirements.md#r-feed-001)); `feedback --form`
  *   prints the form of that answer for the prompt.
  *
  * The exit code is 0 for success, 1 when `check` found a problem, `format --check` found a file that the format

@@ -4,7 +4,7 @@
 
 /**
  * The instructions for AI agents
- * ([R-COURSE-005](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-005)): `cs instructions
+ * ([R-COURSE-005](../../docs/requirements.md#r-course-005)): `cs instructions
  * <topic>` prints the rules of a topic, so that an agent reads the rules of the installed version without web access.
  * The source of the rules of the format is docs/format.md, which the build puts into the bundle, so the document on
  * GitHub and the printed rules are the same text. A topic prints the start of the document and its sections. After them

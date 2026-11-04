@@ -9,11 +9,10 @@ Licensed under the MIT License. See LICENSE in the repository root for details.
 This guide explains the files, the development, the tests and the release of
 the course module. The [README](README.md) describes the use in short, and
 [docs/format.md](docs/format.md) is the specification of the format of the
-files of a course, the source of `cs instructions`. The requirements of
-the course module, each with an ID (`R-COURSE-001` to `R-COURSE-012`,
-`R-FEED-001` to `R-FEED-004`), are in
-[docs/course.md of nimblescape/markdown](https://github.com/nimblescape/markdown/blob/main/docs/course.md)
-until the document moves into this repository.
+files of a course, the source of `cs instructions`.
+[docs/requirements.md](docs/requirements.md) holds the requirements of the
+course module, each with an ID (`R-COURSE-001` to `R-COURSE-012`,
+`R-FEED-001` to `R-FEED-004`).
 
 ## Files
 
@@ -22,6 +21,7 @@ until the document moves into this repository.
 | `src/course/` | The library of the course module, without an API of VS Code: the comment of the format (`comment.ts`), the names of the sections of each language (`languages.ts`), the blocks of a Markdown file with markdown-it (`markdown.ts`), the readers of a chapter, an assignment and a feedback file, the reader and the checks of a course (`course.ts`), the checks of the files for people (`pages.ts`), the comments of a course (`format.ts`), the instructions with the own rules of a course (`instructions.ts`) and the files of a new course (`create.ts`). |
 | `src/cli/` | The command `cs` (`cli.ts`, started by `main.ts`) and the library of the npm package (`index.ts`). |
 | `src/vscode/`, `src/extension.ts` | The course extension of VS Code: the courses of the workspace, the view "Course", the warnings and the comment on save. |
+| `docs/requirements.md` | The requirements of the course module. |
 | `docs/format.md` | The specification of the format, printed by `cs instructions <topic>`. |
 | `resources/icon.png`, `resources/icon.svg` | The Marketplace icon (256 × 256 PNG, because the Marketplace takes no SVG icon) and its source: the README of an assignment with a checklist of its requirements and a graduation cap, on the tile of the nimblescape extensions. After a change of the source, render it again as a PNG of 256 × 256 pixels with a transparent background, for example with a screenshot of the SVG in Chromium. |
 | `cli/` | The npm package `@nimblescape/course`: its manifest, its README and its types `index.d.ts`. |

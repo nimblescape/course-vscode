@@ -4,8 +4,8 @@
 
 /**
  * The comments of the format of the README files of a course
- * ([R-COURSE-004](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-004),
- * [R-COURSE-005](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-005)): `cs format` and
+ * ([R-COURSE-004](../../docs/requirements.md#r-course-004),
+ * [R-COURSE-005](../../docs/requirements.md#r-course-005)): `cs format` and
  * the command "Add Format Comments" of the course extension write the comment into each README of a course that has
  * none or has one of an older version. A course changes to its forms with this change, together with the removal of its
  * copies of the forms. The feedback files get their comment from the feedback program. The module uses no API of
