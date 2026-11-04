@@ -64,6 +64,13 @@ export function fenced(text: string, language = ''): string {
 export const oneLine = (value: string): string => value.replace(/\s+/g, ' ').trim().replace(/^#+/, '').trim();
 
 /**
+ * unmarked returns a text of the answer as one line, without the status marks (✅, ⚠️, ❌, 💡) at its start. The writer
+ * puts the mark of the status in front of the text, so a mark that the answer writes as well would show twice.
+ * @param value - The text.
+ */
+export const unmarked = (value: string): string => oneLine(value).replace(/^(?:(?:✅|⚠\uFE0F?|❌|💡)\s*)+/u, '').trim();
+
+/**
  * shortText returns the first sentence of a requirement without bold marks, cut at a blank outside inline code when it
  * is longer than the limit. The text ends before its first blank line or nested list.
  * @param text - The text of the requirement.
@@ -273,7 +280,7 @@ export function feedbackPart(input: FeedbackInput): { text: string; score: numbe
   }
   out.push(`${h2} ${words.assessment}`, '');
   answer.requirements.forEach((item, index) => {
-    out.push(`- ${icons[item.status]} **${index + 1}. ${shortText(assignment.requirements[index].text)}** – ${oneLine(item.comment)}`);
+    out.push(`- ${icons[item.status]} **${index + 1}. ${shortText(assignment.requirements[index].text)}** – ${unmarked(item.comment)}`);
   });
   out.push('');
   const comments = new Map(answer.criteria.map((item) => [item.id, item.comment]));
@@ -283,11 +290,11 @@ export function feedbackPart(input: FeedbackInput): { text: string; score: numbe
   out.push(`- **${words.run}:** ${oneLine(answer.run)}`, `- **${words.commits}:** ${input.commits}`, '');
   out.push(`${h2} ${words.bestPractices}`, '');
   for (const item of answer.best_practices) {
-    out.push(`- ${item.rating === 'good' ? '✅' : '💡'} **${oneLine(item.topic)}:** ${oneLine(item.text)}`);
+    out.push(`- ${item.rating === 'good' ? '✅' : '💡'} **${oneLine(item.topic)}:** ${unmarked(item.text)}`);
   }
   out.push('', `${h2} ${words.suggestions}`, '');
   for (const item of answer.suggestions) {
-    out.push(`💡 ${oneLine(item.text)}`, '');
+    out.push(`💡 ${unmarked(item.text)}`, '');
     if ((item.code ?? '').trim() !== '') {
       out.push(fenced(item.code ?? '', String(item.language ?? '').toLowerCase().replace(/[^a-z0-9]/g, '')), '');
     }

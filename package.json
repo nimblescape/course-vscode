@@ -34,6 +34,11 @@
   },
   "pricing": "Free",
   "preview": true,
+  "icon": "resources/icon.png",
+  "galleryBanner": {
+    "color": "#e8f0f3",
+    "theme": "light"
+  },
   "qna": "https://github.com/nimblescape/course-vscode/issues",
   "main": "./dist/extension.js",
   "scripts": {

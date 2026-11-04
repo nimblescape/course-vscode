@@ -7,7 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { blocksOf } from './markdown';
 import { readAssignment } from './course';
 import { readFeedbackBlocks } from './feedback';
-import { AnswerError, answerForm, feedbackFile, feedbackPart, parseAnswer, scoreOf, shortText } from './feedbackWriter';
+import { AnswerError, answerForm, feedbackFile, feedbackPart, parseAnswer, scoreOf, shortText, unmarked } from './feedbackWriter';
 import { languages } from './languages';
 import type { Assignment } from './types';
 
@@ -111,6 +111,41 @@ describe('the writer of the feedback file', () => {
       [false, 50, false, 3, 3],
       [true, 50, true, 4, 3],
     ]);
+  });
+
+  it('writes each status mark once, also when the answer starts its text with the mark', () => {
+    expect(unmarked('💡 Nutze for … of.')).toBe('Nutze for … of.');
+    expect(unmarked('⚠️ Fast fertig.')).toBe('Fast fertig.');
+    expect(unmarked('✅ ❌ Doppelt.')).toBe('Doppelt.');
+    expect(unmarked('Nutze 💡 im Text.')).toBe('Nutze 💡 im Text.');
+    const part = feedbackPart({
+      answer: parseAnswer(
+        JSON.stringify(
+          answer({
+            requirements: [
+              { id: 'R1', comment: '✅ Das Array hat drei Preise.', status: 'met' },
+              { id: 'R2', comment: 'Die Ausgabe fehlt.', status: 'missing' },
+              { id: 'R3', comment: '⚠️ Die Summe stimmt.', status: 'partly' },
+            ],
+            best_practices: [{ rating: 'improve', topic: 'Loops', text: '💡 Nutze for … of.' }],
+            suggestions: [{ text: '💡 Gib jede Zeile aus.' }],
+          }),
+        ),
+        assignment,
+        false,
+      ),
+      assignment,
+      language: languages.de,
+      time: '04.11.2026 10:00',
+      commits: 1,
+      notRunning: [],
+      update: false,
+    });
+    expect(part.text).toContain('- 💡 **Loops:** Nutze for … of.');
+    expect(part.text).toContain('\n💡 Gib jede Zeile aus.\n');
+    expect(part.text).toContain('** – Das Array hat drei Preise.');
+    expect(part.text).toContain('** – Die Summe stimmt.');
+    expect(part.text).not.toContain('💡 💡');
   });
 
   it('adds the comment of the format to an older feedback file without it when it appends an update', () => {

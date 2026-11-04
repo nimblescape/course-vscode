@@ -23,6 +23,7 @@ until the document moves into this repository.
 | `src/cli/` | The command `cs` (`cli.ts`, started by `main.ts`) and the library of the npm package (`index.ts`). |
 | `src/vscode/`, `src/extension.ts` | The course extension of VS Code: the courses of the workspace, the view "Course", the warnings and the comment on save. |
 | `docs/format.md` | The specification of the format, printed by `cs instructions <topic>`. |
+| `resources/icon.png`, `resources/icon.svg` | The Marketplace icon (256 × 256 PNG, because the Marketplace takes no SVG icon) and its source: the README of an assignment with a checklist of its requirements and a graduation cap, on the tile of the nimblescape extensions. After a change of the source, render it again as a PNG of 256 × 256 pixels with a transparent background, for example with a screenshot of the SVG in Chromium. |
 | `cli/` | The npm package `@nimblescape/course`: its manifest, its README and its types `index.d.ts`. |
 | `test/fixtures/course-de/` | A small German course for the tests, with a `FEEDBACK.md` that the feedback program `majikmate/course-feedback` wrote. |
 | `test/cli/`, `test/vscode/` | The tests of the built command and the tests in a real VS Code. |
