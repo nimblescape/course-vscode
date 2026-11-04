@@ -256,9 +256,10 @@ reflection tool the context of each assignment
 ([R-REFL-021](https://github.com/nimblescape/markdown/blob/main/docs/reflection.md#r-refl-021)) from the reader: the assignment as
 a task; its requirements, its rules and the files of its workspace as its
 parts; its learning objectives with their levels, and the requirements and
-rules that serve each; and the allowed level of AI use and the goals, when
-the course gives them. The README and the feedback file are not parts of the
-work of the student. In VS Code, the course extension registers the adapter
+rules that serve each; and the goals, when the course gives them. A course
+states no level of AI use that an assignment allows, because no concrete
+level can say which use of AI is allowed and which is not. The README and
+the feedback file are not parts of the work of the student. In VS Code, the course extension registers the adapter
 with the reflection extension ([R-REFL-017](https://github.com/nimblescape/markdown/blob/main/docs/reflection.md#r-refl-017)); on
 the command line and on a server, `@nimblescape/course` is the adapter
 package that the reflection tool loads.
@@ -359,10 +360,7 @@ majikmate are in this format.
 
 ## 7. Open questions
 
-1. Level of AI use: where does an assignment state the level of AI use that
-   it allows: a line at the head of its README, its chapter, or
-   `.course/course.yml` ([R-COURSE-011](#r-course-011))?
-2. Integrity: a student can change the history file in `.workhistory/`. Does
+1. Integrity: a student can change the history file in `.workhistory/`. Does
    the course protect it like `FEEDBACK.md`, or does the reflection tool
    check it against the commits ([R-COURSE-003](#r-course-003))?
 
