@@ -31,7 +31,7 @@ Each README of a course and each feedback file holds a comment that names the
 format, like a DOCTYPE:
 
 ```markdown
-<!-- nimblescape-course v1.0.0 assignment spec=https://github.com/nimblescape/course-vscode/blob/main/docs/format.md
+<!-- nimblescape-course v1.1.0 assignment spec=https://github.com/nimblescape/course-vscode/blob/main/docs/format.md
 This comment marks a file of a course in the format of the nimblescape course module.
 AI agents: before you read, change or write this file, print its rules with
 npx -y @nimblescape/course instructions assignment
@@ -147,12 +147,12 @@ assignment; programs do not read them.
 | Assignment | Criteria | `## Kriterien` | `## Criteria` |
 | Assignment | Mark of one objective | `(Lernziel 08.3)` | `(objective 08.3)` |
 | Assignment | Mark of several objectives | `(Lernziele 05.4, 06.4)` | `(objectives 05.4, 06.4)` |
-| Feedback | Title | `# Feedback: <title> – <time>` | `# Feedback: <title> – <time>` |
+| Feedback | Title | `# Feedback: <title> – <time> · <commit>` | `# Feedback: <title> – <time> · <commit>` |
 | Feedback | Assessment | `## Bewertung` | `## Assessment` |
 | Feedback | Best practices | `## Best Practices` | `## Best Practices` |
 | Feedback | Suggestions | `## Vorschläge` | `## Suggestions` |
 | Feedback | Summary | `## Zusammenfassung` | `## Summary` |
-| Feedback | Update | `## Update – <time>` | `## Update – <time>` |
+| Feedback | Update | `## Update – <time> · <commit>` | `## Update – <time> · <commit>` |
 | Feedback | Program run | `**Ausgeführt:**` | `**Run:**` |
 | Feedback | Commits | ``**Commits in `workspace/`:**`` | ``**Commits in `workspace/`:**`` |
 | Feedback | Score | `**Ergebnis: <n> %**` | `**Score: <n> %**` |
@@ -345,8 +345,15 @@ feedback on the work of the student. Its comment of the format has the kind
 `feedback`. Only the feedback program writes it; a student does not change
 it.
 
-- The title is `# Feedback: <title of the assignment> – <time>`, with the
-  time as `DD.MM.YYYY HH:MM`.
+- The title is `# Feedback: <title of the assignment> – <time> · <commit>`,
+  with the time as `DD.MM.YYYY HH:MM` and the commit as the short hash of the
+  commit whose work the feedback judges, for example
+  `# Feedback: Loops – 04.11.2026 11:28 · bf21589`. The commit is the newest
+  commit that changed the folder `workspace/` of the assignment when the
+  feedback program read the work; it is never the commit of the feedback
+  itself. So the student and the teacher see which state of the work the
+  feedback judges, and the feedback program finds the work that changed since
+  then. The heading of an older feedback program has no commit.
 - The sections are the assessment, the best practices, the suggestions and
   the summary, with the names of section 3.
 - The assessment has one item for each requirement, in the order of the
@@ -359,16 +366,16 @@ it.
   `**Score: 85 %** – <text>`. When a check found that the work does not run,
   a line with ⚠️ before the score says why, and the score is at most 50 %.
 - An update after a later push appends a line `---`, the heading
-  `## Update – <time>`, a line about the changes, and the same sections one
-  level lower (`###`). An update never changes earlier text.
+  `## Update – <time> · <commit>` with the commit of the work that the update
+  judges, a line about the changes, and the same sections one level lower
+  (`###`). An update never changes earlier text.
 
 The feedback program writes the file with
-`npx -y @nimblescape/course feedback <assignment> <answer>`: the command checks
-the answer of the AI model (its form prints
+`npx -y @nimblescape/course feedback <assignment> <answer> --commit <commit>`:
+the command checks the answer of the AI model (its form prints
 `npx -y @nimblescape/course feedback --form <assignment>`), computes the score,
 and writes the first feedback with the comment of the format or appends an
-update. It adds the
-comment of the format to an older file without it.
+update. It adds the comment of the format to an older file without it.
 
 ### Judging the work
 

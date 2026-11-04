@@ -118,6 +118,7 @@ export interface Feedback {
 
 export interface FeedbackEntry {
   time: string;
+  commit: string | undefined;
   update: boolean;
   changes: string | undefined;
   requirements: { id: string; status: Status; text: string; comment: string }[];

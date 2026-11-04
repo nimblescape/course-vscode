@@ -43,7 +43,7 @@ npx -y @nimblescape/course read 20-assignments/01-loops/01.01-count
 npx -y @nimblescape/course read 20-assignments/01-loops/01.01-count/FEEDBACK.md
 npx -y @nimblescape/course create my-course --language de   # writes the files of a new course
 npx -y @nimblescape/course feedback --form 20-assignments/01-loops/01.01-count   # prints the form of the answer
-npx -y @nimblescape/course feedback 20-assignments/01-loops/01.01-count answer.json --commits 3   # writes FEEDBACK.md
+npx -y @nimblescape/course feedback 20-assignments/01-loops/01.01-count answer.json --commit bf21589 --commits 3   # writes FEEDBACK.md
 ```
 
 | Command | Effect |
@@ -54,7 +54,7 @@ npx -y @nimblescape/course feedback 20-assignments/01-loops/01.01-count answer.j
 | `format --check [folder]` | Writes nothing; names each file that needs the comment. |
 | `read [path]` | Prints the course, an assignment, a chapter or a feedback file as JSON. The path is the folder of the course, the folder or the README of an assignment, the README of a chapter, or a `FEEDBACK.md`. |
 | `create <folder> [--language de\|en]` | Writes the files of a new, empty course into the folder: `.course/course.yml`, `.course/instructions/all.md`, the README of the course, the overviews, the course plan and the cheat sheet, each with the comment of the format. It keeps each file that exists. The language is `en` when the option is missing. |
-| `feedback <assignment> <answer>` | For the feedback program: checks the JSON answer of an AI model on the work of a student (the file `<answer>`), computes the score, and writes `FEEDBACK.md` next to the README of the assignment with the comment of the format, or appends an update when the file has a feedback. Options: `--commits <n>` (the commits of the student in `workspace/`, default 0), `--not-running <reason>` (a reason why the work does not run, in the language of the course; the score is then at most 50 %; it may repeat), `--time <DD.MM.YYYY HH:MM>` (default: now, in the local time). |
+| `feedback <assignment> <answer>` | For the feedback program: checks the JSON answer of an AI model on the work of a student (the file `<answer>`), computes the score, and writes `FEEDBACK.md` next to the README of the assignment with the comment of the format, or appends an update when the file has a feedback. Options: `--commit <hash>` (the short hash of the commit whose work the feedback judges: the newest commit that changed `workspace/`; the heading shows it after the time, default none), `--commits <n>` (the commits of the student in `workspace/`, default 0), `--not-running <reason>` (a reason why the work does not run, in the language of the course; the score is then at most 50 %; it may repeat), `--time <DD.MM.YYYY HH:MM>` (default: now, in the local time). |
 | `feedback --form <assignment>` | Prints the form of the answer with each requirement and criterion of the assignment, for the prompt of the AI model. The rules of judging print `instructions feedback`. |
 | `--help` | Shows the help. |
 | `--version` | Shows the version of the command and of the format. |
@@ -79,7 +79,7 @@ topic. Each file of a course starts with a comment that names
 the format and tells AI agents the command of its rules:
 
 ```markdown
-<!-- nimblescape-course v1.0.0 assignment spec=https://github.com/nimblescape/course-vscode/blob/main/docs/format.md
+<!-- nimblescape-course v1.1.0 assignment spec=https://github.com/nimblescape/course-vscode/blob/main/docs/format.md
 This comment marks a file of a course in the format of the nimblescape course module.
 AI agents: before you read, change or write this file, print its rules with
 npx -y @nimblescape/course instructions assignment

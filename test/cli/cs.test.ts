@@ -40,7 +40,7 @@ describe('the built command cs', () => {
       fs.writeFileSync(readme, fs.readFileSync(readme, 'utf8').split('\n').slice(7).join('\n'));
       expect(spawnSync(process.execPath, [bundle, 'format', '--check'], { cwd: copy }).status).toBe(1);
       expect(spawnSync(process.execPath, [bundle, 'format'], { cwd: copy }).status).toBe(0);
-      expect(fs.readFileSync(readme, 'utf8').startsWith('<!-- nimblescape-course v1.0.0 assignment spec=')).toBe(true);
+      expect(fs.readFileSync(readme, 'utf8').startsWith('<!-- nimblescape-course v1.1.0 assignment spec=')).toBe(true);
       expect(spawnSync(process.execPath, [bundle, 'format', '--check'], { cwd: copy }).status).toBe(0);
     } finally {
       fs.rmSync(copy, { recursive: true, force: true });

@@ -8,7 +8,7 @@ import { commentLines, findComment, newerFormat, specUrl, withComment } from './
 describe('the comment of the format', () => {
   it('names the format, its version, the kind and the specification, and the command of the instructions of the kind', () => {
     const lines = commentLines('chapter');
-    expect(lines[0]).toBe(`<!-- nimblescape-course v1.0.0 chapter spec=${specUrl}`);
+    expect(lines[0]).toBe(`<!-- nimblescape-course v1.1.0 chapter spec=${specUrl}`);
     expect(lines).toContain('npx -y @nimblescape/course instructions chapter');
     expect(lines.at(-1)).toBe('-->');
     expect(lines.slice(0, -1).some((line) => line.includes('-->'))).toBe(false);
@@ -16,7 +16,7 @@ describe('the comment of the format', () => {
 
   it('finds the comment after other comments at the start, and not in a code block', () => {
     const lines = ['<!-- nimblescape-markdownnotes v1.0.0 spec=x', 'words', '-->', '', ...commentLines('assignment'), '', '# Aufgabe'];
-    expect(findComment(lines)).toMatchObject({ start: 4, end: 9, kind: 'assignment', atStart: true, version: { major: 1, minor: 0, patch: 0 } });
+    expect(findComment(lines)).toMatchObject({ start: 4, end: 9, kind: 'assignment', atStart: true, version: { major: 1, minor: 1, patch: 0 } });
     expect(findComment(['```markdown', ...commentLines('assignment'), '```'])).toBeUndefined();
   });
 
@@ -46,7 +46,7 @@ describe('the comment of the format', () => {
   });
 
   it('keeps a comment of the same or a higher version, also with other words', () => {
-    expect(withComment(['<!-- nimblescape-course v1.0.0 chapter spec=x', 'other words', '-->', '', '# 01'], 'chapter')).toBeUndefined();
+    expect(withComment(['<!-- nimblescape-course v1.1.0 chapter spec=x', 'other words', '-->', '', '# 01'], 'chapter')).toBeUndefined();
     expect(withComment(['<!-- nimblescape-course v1.2.0 chapter spec=x', '-->'], 'chapter')).toBeUndefined();
     expect(newerFormat(['<!-- nimblescape-course v2.0.0 chapter spec=x', '-->'])).toEqual({ major: 2, minor: 0, patch: 0 });
     expect(newerFormat(['<!-- nimblescape-course v1.9.0 chapter spec=x', '-->'])).toBeUndefined();

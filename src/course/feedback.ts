@@ -6,7 +6,7 @@
  * The reader of the feedback file of an assignment
  * ([R-FEED-001](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-feed-001),
  * [R-FEED-002](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-feed-002)): for the first feedback
- * and for each update, the time, the status of each requirement, the comment on each criterion, the program run, the
+ * and for each update, the time, the commit of the work, the status of each requirement, the comment on each criterion, the program run, the
  * number of commits, the score, and whether a check capped the score. It also gives the places where the file differs
  * from its form. The module uses no API of VS Code.
  */
@@ -24,13 +24,22 @@ const requirementItem = /^(✅|⚠️|⚠|❌)\s*\*\*(\d+)\.\s+([\s\S]*?)\*\*\s+
 /** labelItem matches an item with a bold label: a criterion, the program run or the commits. */
 const labelItem = /^\*\*([^*]+?):\*\*\s*([\s\S]*)$/;
 
+/** commitMark matches the end of a heading after its time: ` · ` and the short hash of the commit, for example ` · bf21589`. */
+const commitMark = /^([\s\S]*?)\s+·\s+([0-9a-f]{7,40})$/;
+
 /**
- * splitTime returns the text and the time of a heading of the form `<text> – <time>`.
+ * splitTime returns the text, the time and the commit of a heading of the form `<text> – <time>` or
+ * `<text> – <time> · <commit>`.
  * @param text - The text of the heading.
  */
-function splitTime(text: string): { text: string; time: string } {
+function splitTime(text: string): { text: string; time: string; commit: string | undefined } {
   const at = text.lastIndexOf(' – ');
-  return at < 0 ? { text, time: '' } : { text: text.slice(0, at).trim(), time: text.slice(at + 3).trim() };
+  if (at < 0) {
+    return { text, time: '', commit: undefined };
+  }
+  const stamp = text.slice(at + 3).trim();
+  const mark = commitMark.exec(stamp);
+  return { text: text.slice(0, at).trim(), time: mark ? mark[1] : stamp, commit: mark?.[2] };
 }
 
 /**
@@ -117,8 +126,10 @@ export function readFeedbackBlocks(blocks: Blocks, file: string, language: Langu
     }
     const firstSection = blocks.headings.find((each) => each.line > heading.line && each.level === level);
     const changes = update ? blocks.paragraphs.find((paragraph) => paragraph.line > heading.line && paragraph.line < (firstSection?.line ?? end))?.text : undefined;
+    const { time, commit } = splitTime(heading.text);
     entries.push({
-      time: splitTime(heading.text).time,
+      time,
+      commit,
       update,
       changes,
       requirements,

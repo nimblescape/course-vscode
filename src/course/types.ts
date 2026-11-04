@@ -173,6 +173,11 @@ export interface Feedback {
 export interface FeedbackEntry {
   /** time is the time of the heading, for example `02.11.2026 11:30`. */
   time: string;
+  /**
+   * commit is the short hash of the commit whose work the entry judges, after the time of the heading, for example
+   * `bf21589`, or undefined when the heading names none.
+   */
+  commit: string | undefined;
   /** update tells whether the entry is an update. */
   update: boolean;
   /** changes is the line about the changes of an update, or undefined. */

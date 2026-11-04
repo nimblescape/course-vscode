@@ -102,8 +102,8 @@ describe('the course extension', () => {
     const editor = await vscode.window.showTextDocument(document);
     await editor.edit((builder) => builder.insert(new vscode.Position(document.lineCount - 1, 0), 'Viel Spaß!\n'));
     assert.ok(await document.save());
-    assert.ok(document.getText().startsWith('<!-- nimblescape-course v1.0.0 assignment spec='));
-    assert.ok(fs.readFileSync(file, 'utf8').startsWith('<!-- nimblescape-course v1.0.0 assignment spec='));
+    assert.ok(document.getText().startsWith('<!-- nimblescape-course v1.1.0 assignment spec='));
+    assert.ok(fs.readFileSync(file, 'utf8').startsWith('<!-- nimblescape-course v1.1.0 assignment spec='));
     await vscode.commands.executeCommand('workbench.action.closeActiveEditor');
   });
 });
