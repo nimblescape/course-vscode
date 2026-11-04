@@ -1,0 +1,20 @@
+<!-- SPDX-License-Identifier: MIT -->
+<!-- © 2026 Hannes Stauss (scalarion@nimblescape.com) -->
+<!-- The source of resources/icon.png, the Marketplace icon (256 × 256): the README of an assignment with a checklist of its requirements and a graduation cap, on the tile of the nimblescape extensions. -->
+<svg width="256" height="256" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2f6db3"/>
+      <stop offset="1" stop-color="#1a365d"/>
+    </linearGradient>
+  </defs>
+  <rect width="256" height="256" rx="44" fill="url(#tile)"/>
+  <g fill="none" stroke="#fff" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M98 220H60a14 14 0 0 1-14-14V50a14 14 0 0 1 14-14H142L180 74V110"/>
+    <path d="M142 36V74H180"/>
+    <path d="M70 90l10 10 18-20M114 92H150M70 132l10 10 18-20M114 134H126M70 176H90"/>
+    <path d="M168 120L228 148L168 176L108 148Z" fill="#24548c"/>
+    <path d="M134 164V194c0 12 68 12 68 0V164" fill="#24548c"/>
+    <path d="M228 148V188"/>
+  </g>
+</svg>
