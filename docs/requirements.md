@@ -66,6 +66,9 @@ course for the reflection tool ([R-REFL-021](https://github.com/nimblescape/mark
 gives the reflection tool the context of each assignment from the README
 files ([R-COURSE-011](#r-course-011)). The history and the reflection tool
 know no course, and the course module uses no method of the reflection tool.
+The course protects the history file in `.workhistory/` in the same way as
+`FEEDBACK.md`: the image of the Dev Spaces opens it read-only in the editor,
+and only the history extension writes it.
 
 ## 2. Terms
 
@@ -360,9 +363,7 @@ majikmate are in this format.
 
 ## 7. Open questions
 
-1. Integrity: a student can change the history file in `.workhistory/`. Does
-   the course protect it like `FEEDBACK.md`, or does the reflection tool
-   check it against the commits ([R-COURSE-003](#r-course-003))?
+No question is open.
 
 ## Sources
 
