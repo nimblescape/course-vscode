@@ -4,8 +4,8 @@
 
 /**
  * The course extension of VS Code
- * ([R-COURSE-010](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-010),
- * [R-COURSE-012](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-012)). It reads each course
+ * ([R-COURSE-010](../docs/requirements.md#r-course-010),
+ * [R-COURSE-012](../docs/requirements.md#r-course-012)). It reads each course
  * of the workspace with the reader of the course module and:
  *
  * - shows the structure of the courses in the view "Course" of the explorer;
@@ -16,7 +16,7 @@
  * - adds the comments of the format to all files of a course with "Add Format Comments".
  *
  * The adapter of the reflection tool
- * ([R-COURSE-011](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-011)) comes with the
+ * ([R-COURSE-011](../docs/requirements.md#r-course-011)) comes with the
  * reflection extension, which does not exist yet.
  */
 

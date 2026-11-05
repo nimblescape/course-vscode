@@ -4,7 +4,7 @@
 
 /**
  * The items of the view "Course"
- * ([R-COURSE-012](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-012)): the structure of a
+ * ([R-COURSE-012](../../docs/requirements.md#r-course-012)): the structure of a
  * course, its chapters with their learning objectives and assignments, and each assignment with its learning
  * objectives, requirements, criteria and feedback, each item with the file and the line that it opens. The module uses
  * no API of VS Code, so that the tests run it without VS Code.

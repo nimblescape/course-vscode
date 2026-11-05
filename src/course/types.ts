@@ -4,8 +4,8 @@
 
 /**
  * The structured data of a course
- * ([R-COURSE-009](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-009),
- * [R-FEED-002](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-feed-002)): the JSON that the reader
+ * ([R-COURSE-009](../../docs/requirements.md#r-course-009),
+ * [R-FEED-002](../../docs/requirements.md#r-feed-002)): the JSON that the reader
  * gives, the same on every platform. Each path is relative to the folder of the course, with `/` between its
  * names, and each line is the number of a line of its file, from 1. cli/index.d.ts repeats these types for the users of
  * the npm package. The module uses no API of VS Code.

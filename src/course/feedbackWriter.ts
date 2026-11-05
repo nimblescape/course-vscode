@@ -4,7 +4,7 @@
 
 /**
  * The writer of the feedback file of an assignment, for the feedback program
- * ([R-FEED-001](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-feed-001)): the form of the answer
+ * ([R-FEED-001](../../docs/requirements.md#r-feed-001)): the form of the answer
  * that an AI model gives on the work of a student, the check of that answer, the score, and the text of `FEEDBACK.md`
  * in the form of section 8 of the format. The command `cs feedback` runs it, so that the form of `FEEDBACK.md` lives
  * only in this package. The module uses no API of VS Code.

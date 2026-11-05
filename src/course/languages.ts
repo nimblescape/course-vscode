@@ -4,7 +4,7 @@
 
 /**
  * The names of the sections and of the fixed texts of the files of a course in each language
- * ([R-COURSE-006](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-006)): each kind of file
+ * ([R-COURSE-006](../../docs/requirements.md#r-course-006)): each kind of file
  * has sections with fixed roles, and the name of a section is in the language of the course. Section 3 of
  * docs/format.md shows the same table, and a test checks that both have the same names. The module uses no API of
  * VS Code.

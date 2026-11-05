@@ -3,8 +3,8 @@
 // Licensed under the MIT License. See LICENSE in the repository root for details.
 
 /**
- * The reader of a course ([R-COURSE-009](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-009))
- * and its checks ([R-COURSE-010](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-010)). It
+ * The reader of a course ([R-COURSE-009](../../docs/requirements.md#r-course-009))
+ * and its checks ([R-COURSE-010](../../docs/requirements.md#r-course-010)). It
  * reads the settings of .course/course.yml, finds the files of the course by the kind in their comment of the format
  * and by the patterns of the settings, reads each file with the rules of its kind, and checks the files against each
  * other: the objectives of the assignments against the tables of the chapters. The feedback program, the adapter of the

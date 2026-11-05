@@ -4,7 +4,7 @@
 
 /**
  * The reader of the README of an assignment
- * ([R-COURSE-008](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-008)): the title and the
+ * ([R-COURSE-008](../../docs/requirements.md#r-course-008)): the title and the
  * scenario, the due date, the link to the chapter, the learning objectives, the example run, the requirements R1 to Rn
  * with their groups and the marks of their objectives, the rules and the criteria C1 to Cm. It also gives the places
  * where the README differs from its form. The checks that need the tables of the chapters are in check.ts. The module

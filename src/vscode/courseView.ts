@@ -4,7 +4,7 @@
 
 /**
  * The view "Course" in the explorer
- * ([R-COURSE-012](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-012)): the items of
+ * ([R-COURSE-012](../../docs/requirements.md#r-course-012)): the items of
  * structure.ts for each course of the workspace. A click on an item opens its file at its line.
  */
 

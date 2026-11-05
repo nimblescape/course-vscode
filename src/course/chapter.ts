@@ -4,7 +4,7 @@
 
 /**
  * The reader of the README of a chapter
- * ([R-COURSE-007](https://github.com/nimblescape/markdown/blob/main/docs/course.md#r-course-007)): the number and the
+ * ([R-COURSE-007](../../docs/requirements.md#r-course-007)): the number and the
  * title of the chapter from its heading of the first level, the learning objectives from the table of their section,
  * and the links of the tutorials and of the related assignments. It also gives the places where the README differs
  * from its form. The module uses no API of VS Code.
